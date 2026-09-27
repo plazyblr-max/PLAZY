@@ -1,0 +1,369 @@
+// Calm, centered football authentication surface.
+.plazy-auth-shell,
+.plazy-home { min-height: 100vh; }
+
+.plazy-global-header {
+    left: 0;
+    padding: 22px clamp(18px, 4vw, 54px);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 5;
+}
+
+.plazy-global-logo {
+    align-items: center;
+    color: #fff;
+    display: inline-flex;
+    gap: 9px;
+    text-decoration: none;
+}
+
+.plazy-global-mark {
+    align-items: center;
+    background: rgba(39, 157, 88, .88);
+    border: 1px solid rgba(240, 255, 243, .52);
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0, 14, 6, .22);
+    display: inline-flex;
+    font-family: Georgia, serif;
+    font-size: 19px;
+    font-weight: 700;
+    height: 38px;
+    justify-content: center;
+    width: 38px;
+}
+
+.plazy-global-name { font-size: 11px; font-weight: 800; letter-spacing: 2.4px; }
+
+.plazy-choice-page,
+.plazy-dashboard-page {
+    align-items: center;
+    background: #071b10;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+    padding: 24px;
+    position: relative;
+}
+
+.plazy-choice-page::before,
+.plazy-dashboard-page::before {
+    background: url('/plazy/static/src/img/plazy-stadium-login.png') center / cover no-repeat;
+    content: '';
+    filter: blur(5px) brightness(.48) saturate(.64);
+    inset: -10px;
+    position: absolute;
+    transform: scale(1.025);
+}
+
+.plazy-choice-page::after,
+.plazy-dashboard-page::after { background: rgba(2, 18, 9, .45); content: ''; inset: 0; position: absolute; }
+
+.plazy-choice-content,
+.plazy-dashboard-card {
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    background: rgba(8, 39, 22, .72);
+    border: 1px solid rgba(225, 255, 231, .23);
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0, 12, 5, .38);
+    box-sizing: border-box;
+    color: #f3fff5;
+    max-width: 540px;
+    padding: 42px;
+    position: relative;
+    text-align: center;
+    width: 100%;
+    z-index: 1;
+}
+
+.plazy-eyebrow { color: #a7e5b8; font-size: 11px; font-weight: 800; letter-spacing: 2px; margin: 0 0 15px; }
+.plazy-choice-content h1,
+.plazy-dashboard-card h1 { color: #fff; font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0; }
+.plazy-choice-intro,
+.plazy-dashboard-card p:not(.plazy-eyebrow) { color: rgba(229, 249, 234, .75); font-size: 14px; margin: 12px 0 30px; }
+
+.plazy-role-grid { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+.plazy-role-option { align-items: center; background: rgba(237, 255, 241, .07); border: 1px solid rgba(219, 255, 225, .22); border-radius: 12px; color: #fff; display: flex; gap: 13px; min-height: 92px; padding: 14px; text-align: left; text-decoration: none; transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease; }
+.plazy-role-option:hover { background: rgba(133, 225, 157, .15); border-color: rgba(169, 239, 186, .55); color: #fff; transform: translateY(-2px); }
+.plazy-role-mark { align-items: center; background: #2a9456; border: 1px solid rgba(243, 255, 245, .45); border-radius: 10px; display: inline-flex; font-family: Georgia, serif; font-size: 20px; font-weight: 700; height: 42px; justify-content: center; width: 42px; }
+.plazy-role-copy { display: flex; flex-direction: column; gap: 4px; }
+.plazy-role-copy strong { font-size: 14px; }
+.plazy-role-copy small { color: rgba(229, 249, 234, .68); font-size: 12px; }
+.plazy-login-register { border-top: 1px solid rgba(219, 255, 225, .17); margin-top: 27px; padding-top: 20px; }
+.plazy-login-register > p { color: rgba(229, 249, 234, .72); font-size: 12px; margin: 0 0 12px; text-align: center; }
+.plazy-login-register .plazy-role-option { min-height: 76px; }
+.plazy-site-description { color: rgba(229, 249, 234, .67); font-size: 12px; line-height: 1.55; margin: -12px 0 22px; text-align: center; }
+
+.plazy-auth-page {
+    align-items: center;
+    background: #071b10;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+    padding: 24px;
+    position: relative;
+}
+
+.plazy-auth-page::before {
+    background: url('/plazy/static/src/img/plazy-stadium-login.png') center / cover no-repeat;
+    content: '';
+    filter: blur(5px) brightness(.5) saturate(.66);
+    inset: -10px;
+    position: absolute;
+    transform: scale(1.025);
+}
+
+.plazy-auth-page::after {
+    background: rgba(2, 18, 9, .42);
+    content: '';
+    inset: 0;
+    position: absolute;
+}
+
+.plazy-auth-panel {
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    background: rgba(8, 39, 22, .72);
+    border: 1px solid rgba(225, 255, 231, .23);
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0, 12, 5, .38);
+    box-sizing: border-box;
+    color: #f3fff5;
+    max-width: 410px;
+    padding: 38px 34px 34px;
+    position: relative;
+    width: 100%;
+    z-index: 1;
+}
+
+.plazy-login-panel { animation: plazy-card-in 400ms ease-out both; }
+
+@keyframes plazy-card-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+// Keep the registration card shape intact while allowing its content to scroll.
+.plazy-registration-panel {
+    -ms-overflow-style: none;
+    max-height: calc(100vh - 48px);
+    max-width: 480px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+}
+
+.plazy-registration-panel::-webkit-scrollbar { display: none; }
+.plazy-ball-motion {
+    animation: plazy-ball-float 6s ease-in-out infinite;
+    background: rgba(216, 248, 223, .9);
+    border: 2px solid rgba(15, 77, 40, .74);
+    border-radius: 50%;
+    box-shadow: 0 4px 11px rgba(0, 14, 6, .2);
+    height: 18px;
+    position: absolute;
+    right: 28px;
+    top: 31px;
+    width: 18px;
+}
+
+.plazy-ball-motion::before {
+    background: #145a32;
+    border-radius: 50%;
+    content: '';
+    height: 5px;
+    left: 5px;
+    position: absolute;
+    top: 5px;
+    width: 5px;
+}
+
+@keyframes plazy-ball-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-3px) rotate(8deg); }
+}
+
+.plazy-auth-panel h1 { color: #fff; font-size: 27px; font-weight: 700; line-height: 1.25; margin: 4px 0 7px; text-align: center; }
+.plazy-auth-intro, .plazy-role-picker p { color: rgba(229, 249, 234, .72); font-size: 13px; line-height: 1.5; margin: 0 0 26px; text-align: center; }
+.plazy-form label { color: rgba(244, 255, 246, .9); display: block; font-size: 12px; font-weight: 700; margin: 17px 0 8px; }
+
+.plazy-input-wrap { position: relative; }
+.plazy-input-wrap > .material-symbols-outlined { color: rgba(209, 241, 217, .65); font-size: 18px; left: 14px; pointer-events: none; position: absolute; top: 14px; }
+
+.plazy-form input:not([type='hidden']) {
+    background: rgba(3, 28, 14, .48);
+    border: 1px solid rgba(220, 255, 226, .25);
+    border-radius: 10px;
+    box-sizing: border-box;
+    color: #f8fff9;
+    min-height: 47px;
+    padding: 10px 13px;
+    transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+    width: 100%;
+}
+
+.plazy-input-wrap input { padding-left: 43px !important; }
+.plazy-form input::placeholder { color: rgba(222, 245, 226, .48); }
+.plazy-form input:focus { background: rgba(4, 42, 21, .72); border-color: #69c887; box-shadow: 0 0 0 3px rgba(105, 200, 135, .14); outline: 0; }
+.plazy-form input.is-invalid { border-color: #e49393; box-shadow: 0 0 0 3px rgba(228, 112, 112, .14); }
+.plazy-email-message { color: #ffd2d2; display: none; font-size: 12px; margin: 7px 0 0; }
+.plazy-email-message.is-visible { display: block; }
+.plazy-password-field input { padding-right: 61px !important; }
+
+.plazy-password-toggle { background: transparent; border: 0; color: #a7e5b8; cursor: pointer; font-size: 12px; font-weight: 700; position: absolute; right: 10px; top: 14px; }
+.plazy-password-toggle:hover { color: #fff; }
+
+.plazy-primary-action {
+    background: #32a85f;
+    border: 1px solid rgba(213, 255, 225, .54);
+    border-radius: 10px;
+    box-shadow: 0 9px 22px rgba(0, 31, 13, .28);
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 750;
+    margin-top: 27px;
+    min-height: 49px;
+    transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    width: 100%;
+}
+
+.plazy-primary-action:hover { background: #278c4d; box-shadow: 0 12px 26px rgba(0, 25, 10, .38); transform: translateY(-1px); }
+.plazy-primary-action:active { transform: translateY(0); }
+.plazy-primary-link { align-items: center; display: flex; justify-content: center; text-decoration: none; }
+.plazy-primary-action.is-loading,
+.plazy-otp-resend.is-loading { cursor: wait; opacity: .7; }
+
+.plazy-form-actions { display: grid; gap: 10px; grid-template-columns: 1fr 2fr; margin-top: 27px; }
+.plazy-form-actions .plazy-primary-action { margin-top: 0; }
+.plazy-secondary-action { align-items: center; border: 1px solid rgba(220, 255, 226, .25); border-radius: 10px; color: #e5f9ea; display: flex; font-size: 14px; font-weight: 700; justify-content: center; min-height: 49px; text-decoration: none; transition: background-color 160ms ease, border-color 160ms ease; }
+.plazy-secondary-action:hover { background: rgba(237, 255, 241, .09); border-color: rgba(220, 255, 226, .48); color: #fff; }
+.plazy-otp-panel { max-width: 440px; }
+.plazy-otp-input { font-size: 23px; font-weight: 700; letter-spacing: 10px; padding-left: 20px !important; text-align: center; }
+.plazy-otp-resend { background: transparent; border: 0; color: #bdecca; cursor: pointer; display: block; font-size: 13px; font-weight: 700; margin: 18px auto 0; padding: 4px; }
+.plazy-otp-resend:hover { color: #fff; }
+.plazy-otp-resend:disabled { color: rgba(189, 236, 202, .52); cursor: not-allowed; }
+
+.plazy-form-error,
+.plazy-form-success { border: 1px solid; border-radius: 9px; font-size: 13px; margin: 17px 0 0; padding: 10px 12px; }
+.plazy-form-error { background: rgba(105, 20, 20, .46); border-color: rgba(255, 199, 199, .3); color: #ffe9e9; }
+.plazy-form-success { background: rgba(25, 109, 56, .42); border-color: rgba(190, 255, 207, .28); color: #e8ffed; }
+
+.plazy-role-picker { border-top: 1px solid rgba(219, 255, 225, .17); margin-top: 27px; padding-top: 20px; }
+.plazy-role-picker p { font-size: 12px; margin-bottom: 12px; }
+.plazy-role-actions { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+.plazy-role-actions button { background: rgba(237, 255, 241, .07); border: 1px solid rgba(219, 255, 225, .22); border-radius: 9px; color: #edfff0; cursor: pointer; font-size: 12px; font-weight: 700; min-height: 41px; padding: 8px; transition: background-color 160ms ease, border-color 160ms ease; }
+.plazy-role-actions button:hover { background: rgba(133, 225, 157, .14); border-color: rgba(169, 239, 186, .5); }
+.plazy-text-link { color: #c8f5d2; display: block; font-size: 13px; font-weight: 650; margin-top: 21px; text-align: center; }
+.plazy-text-link:hover { color: #fff; }
+.plazy-forgot-password-link { margin-top: 16px; }
+
+.plazy-home { align-items: center; background: #071b10; display: flex; justify-content: center; overflow: hidden; padding: 24px; position: relative; }
+.plazy-home::before { background: url('/plazy/static/src/img/plazy-stadium-login.png') center / cover no-repeat; content: ''; filter: blur(4px) brightness(.52) saturate(.7); inset: -10px; position: absolute; transform: scale(1.025); }
+.plazy-home::after { background: rgba(2, 18, 9, .36); content: ''; inset: 0; position: absolute; }
+.plazy-home-content { color: #fff; max-width: 420px; position: relative; text-align: center; z-index: 1; }
+.plazy-home-content h1 { font-size: 38px; font-weight: 700; margin: 18px 0 8px; }
+.plazy-home-content p { color: rgba(234, 255, 238, .76); font-size: 15px; margin: 0 0 26px; }
+.plazy-home-ball { animation: plazy-ball-float 6s ease-in-out infinite; background: rgba(224, 250, 230, .9); border: 3px solid #216a3d; border-radius: 50%; box-shadow: 0 10px 28px rgba(0, 12, 5, .26); height: 42px; margin: 0 auto; position: relative; width: 42px; }
+.plazy-home-ball::before { background: #216a3d; border-radius: 50%; content: ''; height: 11px; left: 13px; position: absolute; top: 13px; width: 11px; }
+.plazy-home-action { background: #32a85f; border: 1px solid rgba(220, 255, 228, .55); border-radius: 10px; box-shadow: 0 10px 24px rgba(0, 27, 10, .28); color: #fff; display: inline-block; font-size: 14px; font-weight: 750; min-width: 148px; padding: 14px 20px; text-decoration: none; transition: background-color 160ms ease, transform 160ms ease; }
+.plazy-home-action:hover { background: #278c4d; color: #fff; transform: translateY(-1px); }
+
+@media (max-width: 600px) {
+    .plazy-auth-page { align-items: flex-start; padding: 16px; }
+    .plazy-global-header { padding: 16px 18px; }
+    .plazy-global-name { display: none; }
+    .plazy-auth-panel { border-radius: 18px; margin-top: 22px; padding: 34px 22px 28px; }
+    .plazy-registration-panel { max-height: calc(100vh - 32px); margin-top: 0; }
+    .plazy-ball-motion { right: 20px; top: 24px; }
+    .plazy-auth-panel h1 { font-size: 25px; margin-top: 2px; }
+    .plazy-home-content h1 { font-size: 32px; }
+    .plazy-choice-page,
+    .plazy-dashboard-page { padding: 16px; }
+    .plazy-choice-content,
+    .plazy-dashboard-card { padding: 32px 22px; }
+    .plazy-choice-content h1,
+    .plazy-dashboard-card h1 { font-size: 27px; }
+    .plazy-role-grid { grid-template-columns: 1fr; }
+    .plazy-form-actions { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .plazy-ball-motion,
+    .plazy-home-ball,
+    .plazy-login-panel { animation: none; }
+    .plazy-form input:not([type='hidden']),
+    .plazy-primary-action { transition: none; }
+}
+
+// Dedicated player and team portal shell.
+.plazy-portal-shell { background: #071b10; color: #f3fff5; min-height: 100vh; }
+.plazy-portal-header { -webkit-backdrop-filter: blur(16px); align-items: center; backdrop-filter: blur(16px); background: rgba(6, 31, 17, .78); border-bottom: 1px solid rgba(225, 255, 231, .16); display: flex; gap: 28px; justify-content: space-between; min-height: 74px; padding: 12px clamp(18px, 4vw, 54px); position: sticky; top: 0; z-index: 5; }
+.plazy-portal-nav { display: flex; flex: 1; justify-content: center; }
+.plazy-portal-nav a { color: rgba(233, 255, 239, .76); font-size: 13px; font-weight: 700; text-decoration: none; }
+.plazy-portal-nav a:hover { color: #fff; }
+.plazy-portal-user { align-items: center; display: flex; gap: 14px; white-space: nowrap; }
+.plazy-portal-user > span { color: #e9ffed; font-size: 13px; font-weight: 700; }
+.plazy-portal-user form { margin: 0; }
+.plazy-portal-logout { align-items: center; background: rgba(237, 255, 241, .08); border: 1px solid rgba(219, 255, 225, .2); border-radius: 8px; color: #f3fff5; cursor: pointer; display: inline-flex; font-size: 12px; font-weight: 700; gap: 7px; min-height: 38px; padding: 8px 11px; transition: background-color 160ms ease, border-color 160ms ease; }
+.plazy-portal-logout:hover { background: rgba(237, 255, 241, .16); border-color: rgba(219, 255, 225, .45); }
+.plazy-portal-main { background-blend-mode: multiply; background-color: rgba(2, 17, 9, .8); background-image: url('/plazy/static/src/img/plazy-stadium-login.png'); background-position: center; background-size: cover; min-height: calc(100vh - 148px); padding: clamp(32px, 7vw, 86px) clamp(18px, 6vw, 84px); }
+.plazy-portal-dashboard { margin: 0 auto; max-width: 920px; }
+.plazy-portal-intro { max-width: 510px; }
+.plazy-portal-intro h1 { color: #fff; font-size: 38px; font-weight: 700; line-height: 1.15; margin: 0; }
+.plazy-portal-intro > p:not(.plazy-eyebrow) { color: rgba(229, 249, 234, .76); font-size: 15px; margin: 12px 0 0; }
+.plazy-profile-card { -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); background: rgba(9, 43, 24, .7); border: 1px solid rgba(225, 255, 231, .22); border-radius: 12px; box-shadow: 0 20px 44px rgba(0, 11, 5, .32); margin-top: 34px; max-width: 520px; padding: 26px; }
+.plazy-profile-label { color: #a7e5b8; font-size: 11px; font-weight: 800; letter-spacing: 1.7px; margin: 0 0 9px; }
+.plazy-profile-card h2 { color: #fff; font-size: 23px; margin: 0 0 22px; }
+.plazy-profile-card dl { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; margin: 0; }
+.plazy-profile-card dl div { border-top: 1px solid rgba(225, 255, 231, .16); padding-top: 12px; }
+.plazy-profile-card dt { color: rgba(229, 249, 234, .6); font-size: 11px; font-weight: 700; }
+.plazy-profile-card dd { color: #f3fff5; font-size: 14px; margin: 5px 0 0; }
+.plazy-portal-footer { align-items: center; background: #06160d; border-top: 1px solid rgba(225, 255, 231, .12); display: flex; gap: 20px; justify-content: space-between; min-height: 74px; padding: 14px clamp(18px, 4vw, 54px); }
+.plazy-portal-footer-brand { align-items: center; display: flex; font-size: 11px; font-weight: 800; gap: 9px; letter-spacing: 1.5px; }
+.plazy-portal-footer-brand .plazy-global-mark { font-size: 15px; height: 30px; width: 30px; }
+.plazy-portal-footer p { color: rgba(229, 249, 234, .57); font-size: 12px; margin: 0; }
+.plazy-social-links { display: flex; gap: 8px; }
+.plazy-social-links a { align-items: center; border: 1px solid rgba(219, 255, 225, .2); border-radius: 8px; color: #dffbe6; display: inline-flex; font-size: 15px; height: 34px; justify-content: center; text-decoration: none; transition: background-color 160ms ease, border-color 160ms ease; width: 34px; }
+.plazy-social-links a:hover { background: rgba(237, 255, 241, .12); border-color: rgba(219, 255, 225, .48); color: #fff; }
+.plazy-social-links svg { fill: none; height: 17px; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; width: 17px; }
+.plazy-social-links .plazy-social-dot { fill: currentColor; stroke: none; }
+.plazy-admin-grid { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); margin-top: 34px; }
+.plazy-admin-card { -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); background: rgba(9, 43, 24, .7); border: 1px solid rgba(225, 255, 231, .22); border-radius: 12px; color: #f3fff5; display: flex; flex-direction: column; min-height: 176px; padding: 22px; text-decoration: none; transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease; }
+.plazy-admin-card:hover { background: rgba(20, 77, 40, .78); border-color: rgba(171, 239, 188, .5); color: #fff; transform: translateY(-2px); }
+.plazy-admin-card span { color: #a7e5b8; font-size: 12px; font-weight: 800; }
+.plazy-admin-card strong { color: #fff; font-size: 40px; line-height: 1; margin: 22px 0 auto; }
+.plazy-admin-card small { color: rgba(229, 249, 234, .68); font-size: 12px; }
+.plazy-admin-menu-back { border: 1px solid rgba(219, 255, 225, .26); border-radius: 8px; color: #e7fceb; display: inline-block; font-size: 13px; font-weight: 700; margin-top: 24px; padding: 10px 13px; text-decoration: none; transition: background-color 160ms ease, border-color 160ms ease; }
+.plazy-admin-menu-back:hover { background: rgba(237, 255, 241, .1); border-color: rgba(219, 255, 225, .5); color: #fff; }
+.plazy-admin-choice { -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); background: rgba(9, 43, 24, .7); border: 1px solid rgba(225, 255, 231, .22); border-radius: 12px; box-shadow: 0 20px 44px rgba(0, 11, 5, .32); margin: 0 auto; max-width: 760px; padding: clamp(26px, 5vw, 44px); text-align: center; }
+.plazy-admin-choice h1 { color: #fff; font-size: 32px; margin: 0; }
+.plazy-admin-choice > p:not(.plazy-eyebrow) { color: rgba(229, 249, 234, .72); font-size: 14px; margin: 12px 0 28px; }
+.plazy-admin-choice-grid { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
+.plazy-admin-choice-option { align-items: center; background: rgba(237, 255, 241, .07); border: 1px solid rgba(219, 255, 225, .22); border-radius: 10px; color: #f3fff5; cursor: pointer; display: flex; gap: 13px; min-height: 104px; padding: 16px; text-align: left; transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease; }
+.plazy-admin-choice-option:hover { background: rgba(20, 77, 40, .78); border-color: rgba(171, 239, 188, .5); transform: translateY(-2px); }
+.plazy-admin-choice-option span:last-child { display: flex; flex-direction: column; gap: 5px; }
+.plazy-admin-choice-option strong { font-size: 15px; }
+.plazy-admin-choice-option small { color: rgba(229, 249, 234, .68); font-size: 12px; }
+.plazy-admin-choice-mark { align-items: center; background: #2a9456; border: 1px solid rgba(243, 255, 245, .45); border-radius: 9px; display: inline-flex; flex: 0 0 42px; font-family: Georgia, serif; font-size: 20px; font-weight: 700; height: 42px; justify-content: center; width: 42px; }
+.plazy-admin-choice[hidden] { display: none; }
+
+@media (max-width: 680px) {
+    .plazy-portal-header { gap: 12px; min-height: 64px; padding: 10px 16px; }
+    .plazy-portal-nav { display: none; }
+    .plazy-portal-user { gap: 8px; }
+    .plazy-portal-user > span { font-size: 12px; }
+    .plazy-portal-logout span { display: none; }
+    .plazy-portal-main { background-attachment: scroll; min-height: calc(100vh - 176px); padding: 38px 18px; }
+    .plazy-portal-intro h1 { font-size: 31px; }
+    .plazy-profile-card { margin-top: 26px; padding: 21px; }
+    .plazy-profile-card dl { grid-template-columns: 1fr; }
+    .plazy-admin-grid { grid-template-columns: 1fr; }
+    .plazy-admin-choice-grid { grid-template-columns: 1fr; }
+    .plazy-portal-footer { align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+    .plazy-portal-footer p { display: none; }
+}

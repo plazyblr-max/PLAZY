@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="access_plazy_player_user" model="ir.access">
+        <field name="name">plazy.player.internal.user</field>
+        <field name="model_id" ref="model_plazy_player"/>
+        <field name="group_id" ref="base.group_user"/>
+        <field name="operation">crud</field>
+    </record>
+
+    <record id="access_plazy_team_user" model="ir.access">
+        <field name="name">plazy.team.internal.user</field>
+        <field name="model_id" ref="model_plazy_team"/>
+        <field name="group_id" ref="base.group_user"/>
+        <field name="operation">crud</field>
+    </record>
+
+    <record id="access_plazy_registration_otp_admin" model="ir.access">
+        <field name="name">plazy.registration.otp.admin</field>
+        <field name="model_id" ref="model_plazy_registration_otp"/>
+        <field name="group_id" ref="base.group_system"/>
+        <field name="operation">crud</field>
+    </record>
+</odoo>

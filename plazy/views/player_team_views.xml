@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_plazy_player_list" model="ir.ui.view">
+        <field name="name">plazy.player.list</field>
+        <field name="model">plazy.player</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="full_name"/>
+                <field name="email"/>
+                <field name="mobile"/>
+                <field name="locality"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_plazy_player_form" model="ir.ui.view">
+        <field name="name">plazy.player.form</field>
+        <field name="model">plazy.player</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="full_name"/>
+                        <field name="email"/>
+                        <field name="mobile"/>
+                        <field name="age"/>
+                        <field name="locality"/>
+                        <field name="pincode"/>
+                        <field name="user_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_plazy_player" model="ir.actions.act_window">
+        <field name="name">Players</field>
+        <field name="res_model">plazy.player</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="menu_plazy_root" name="Plazy" sequence="10"
+              groups="base.group_user"/>
+    <record id="action_plazy_admin_home" model="ir.actions.act_url">
+        <field name="name">Admin Home</field>
+        <field name="url">/plazy/admin/dashboard</field>
+        <field name="target">self</field>
+    </record>
+    <menuitem id="menu_plazy_admin_home" name="Admin Home"
+              parent="menu_plazy_root" action="action_plazy_admin_home"
+              sequence="10" groups="base.group_system"/>
+    <menuitem id="menu_plazy_player" name="Players" parent="menu_plazy_root"
+              action="action_plazy_player" sequence="1"
+              groups="base.group_user"/>
+    <record id="view_plazy_team_list" model="ir.ui.view">
+        <field name="name">plazy.team.list</field>
+        <field name="model">plazy.team</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="mobile"/>
+                <field name="locality"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_plazy_team_form" model="ir.ui.view">
+        <field name="name">plazy.team.form</field>
+        <field name="model">plazy.team</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="email"/>
+                        <field name="mobile"/>
+                        <field name="locality"/>
+                        <field name="pincode"/>
+                        <field name="user_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_plazy_team" model="ir.actions.act_window">
+        <field name="name">Teams</field>
+        <field name="res_model">plazy.team</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="menu_plazy_team" name="Teams" parent="menu_plazy_root"
+              action="action_plazy_team" sequence="20"
+              groups="base.group_user"/>
+</odoo>
