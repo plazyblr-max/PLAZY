@@ -240,7 +240,7 @@ class PlazyWebsite(http.Controller):
 
     @http.route('/plazy/signup', type='http', auth='public', website=True, sitemap=False)
     def legacy_signup(self, **_kwargs):
-        return request.redirect('/')
+        return request.redirect('/plazy/join')
 
     @http.route('/plazy', type='http', auth='public', website=True, sitemap=False)
     def plazy_home(self):

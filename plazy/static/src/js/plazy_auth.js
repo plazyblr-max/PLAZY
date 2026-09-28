@@ -35,8 +35,8 @@ class AdminDestinationSelector extends Component {
             <p>Select where you want to continue.</p>
             <div class="plazy-admin-choice-grid">
                 <button type="button" class="plazy-admin-choice-option" t-on-click="() => this.openBackend()">
-                    <span class="plazy-admin-choice-mark">O</span>
-                    <span><strong>Backend</strong><small>Open the standard Odoo workspace</small></span>
+                    <span class="plazy-admin-choice-mark">B</span>
+                    <span><strong>Backend</strong><small>Open the administration workspace</small></span>
                 </button>
                 <button type="button" class="plazy-admin-choice-option" t-on-click="() => this.openPlazyAdmin()">
                     <span class="plazy-admin-choice-mark">P</span>

@@ -19,20 +19,7 @@
     text-decoration: none;
 }
 
-.plazy-global-mark {
-    align-items: center;
-    background: rgba(39, 157, 88, .88);
-    border: 1px solid rgba(240, 255, 243, .52);
-    border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(0, 14, 6, .22);
-    display: inline-flex;
-    font-family: Georgia, serif;
-    font-size: 19px;
-    font-weight: 700;
-    height: 38px;
-    justify-content: center;
-    width: 38px;
-}
+.plazy-brand-icon { display: block; height: 38px; width: 38px; }
 
 .plazy-global-name { font-size: 11px; font-weight: 800; letter-spacing: 2.4px; }
 
@@ -325,7 +312,7 @@
 .plazy-profile-card dd { color: #f3fff5; font-size: 14px; margin: 5px 0 0; }
 .plazy-portal-footer { align-items: center; background: #06160d; border-top: 1px solid rgba(225, 255, 231, .12); display: flex; gap: 20px; justify-content: space-between; min-height: 74px; padding: 14px clamp(18px, 4vw, 54px); }
 .plazy-portal-footer-brand { align-items: center; display: flex; font-size: 11px; font-weight: 800; gap: 9px; letter-spacing: 1.5px; }
-.plazy-portal-footer-brand .plazy-global-mark { font-size: 15px; height: 30px; width: 30px; }
+.plazy-portal-footer-brand .plazy-brand-icon { height: 30px; width: 30px; }
 .plazy-portal-footer p { color: rgba(229, 249, 234, .57); font-size: 12px; margin: 0; }
 .plazy-social-links { display: flex; gap: 8px; }
 .plazy-social-links a { align-items: center; border: 1px solid rgba(219, 255, 225, .2); border-radius: 8px; color: #dffbe6; display: inline-flex; font-size: 15px; height: 34px; justify-content: center; text-decoration: none; transition: background-color 160ms ease, border-color 160ms ease; width: 34px; }
@@ -366,4 +353,115 @@
     .plazy-admin-choice-grid { grid-template-columns: 1fr; }
     .plazy-portal-footer { align-items: flex-start; flex-wrap: wrap; gap: 12px; }
     .plazy-portal-footer p { display: none; }
+}
+
+// Shared public chrome and the football community home page.
+.plazy-body { background: #08190f; }
+.plazy-site-shell { background: #08190f; color: #f5fff5; min-height: 100vh; }
+.plazy-site-header { -webkit-backdrop-filter: blur(18px); align-items: center; backdrop-filter: blur(18px); background: rgba(5, 24, 13, .9); border-bottom: 1px solid rgba(224, 255, 228, .15); display: flex; gap: 32px; height: 74px; justify-content: space-between; padding: 0 clamp(20px, 5vw, 80px); position: relative; z-index: 20; }
+.plazy-site-header .plazy-global-logo { flex: 0 0 auto; }
+.plazy-site-header .plazy-global-name { display: inline; }
+.plazy-site-nav { display: flex; flex: 1; justify-content: center; }
+.plazy-site-nav a, .plazy-header-signin { color: rgba(239, 255, 241, .8); font-size: 13px; font-weight: 700; text-decoration: none; transition: color 180ms ease; }
+.plazy-site-nav a:hover, .plazy-header-signin:hover { color: #fff; }
+.plazy-header-actions { align-items: center; display: flex; gap: 24px; }
+.plazy-header-register { background: #36ae66; border: 1px solid rgba(219, 255, 225, .4); border-radius: 8px; color: #fff; font-size: 13px; font-weight: 750; padding: 10px 18px; text-decoration: none; transition: background-color 180ms ease, transform 180ms ease; }
+.plazy-header-register:hover { background: #48c279; color: #fff; transform: translateY(-1px); }
+.plazy-account-menu { flex: 0 1 auto; max-width: calc(100vw - 145px); min-width: 0; position: relative; }
+.plazy-account-menu summary { align-items: center; border: 1px solid rgba(225, 255, 231, .22); border-radius: 8px; color: #f3fff5; cursor: pointer; display: flex; font-size: 13px; font-weight: 700; gap: 10px; list-style: none; min-height: 42px; padding: 5px 10px 5px 5px; }
+.plazy-account-menu summary > span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.plazy-account-menu summary::-webkit-details-marker { display: none; }
+.plazy-account-menu summary:hover, .plazy-account-menu[open] summary { background: rgba(237, 255, 241, .09); }
+.plazy-account-avatar { align-items: center; background: #278d4f; border-radius: 6px; display: inline-flex; height: 30px; justify-content: center; width: 30px; }
+.plazy-account-chevron { color: #a8d7b5; font-size: 10px; margin-left: 6px; }
+.plazy-account-popover { -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); background: rgba(7, 35, 18, .97); border: 1px solid rgba(225, 255, 231, .23); border-radius: 8px; box-shadow: 0 18px 36px rgba(0, 9, 3, .32); min-width: 185px; padding: 6px; position: absolute; right: 0; top: calc(100% + 9px); }
+.plazy-account-popover a, .plazy-account-popover button { align-items: center; background: transparent; border: 0; border-radius: 5px; color: #e9f9eb; display: flex; font-size: 13px; gap: 10px; padding: 10px 11px; text-align: left; text-decoration: none; width: 100%; }
+.plazy-account-popover a:hover, .plazy-account-popover button:hover { background: rgba(140, 224, 160, .14); color: #fff; }
+.plazy-account-popover form { border-top: 1px solid rgba(225, 255, 231, .15); margin: 5px 0 0; padding-top: 5px; }
+.plazy-site-shell > .plazy-auth-page, .plazy-site-shell > .plazy-choice-page { min-height: calc(100svh - 148px); }
+.plazy-site-shell > .plazy-auth-page { padding-block: 34px; }
+.plazy-site-shell > .plazy-auth-page .plazy-registration-panel { max-height: none; }
+.plazy-site-shell .plazy-portal-footer { min-height: 74px; }
+
+.plazy-landing { overflow: hidden; }
+.plazy-section-wrap { margin: 0 auto; max-width: 1180px; width: calc(100% - 48px); }
+.plazy-hero { align-items: center; background: #08200f url('/plazy/static/src/img/plazy-stadium-login.png') center 53% / cover no-repeat; display: flex; isolation: isolate; min-height: calc(100svh - 142px); padding: 76px 0 96px; position: relative; }
+.plazy-hero::before { background: linear-gradient(90deg, rgba(2, 19, 9, .94) 0%, rgba(4, 24, 12, .82) 36%, rgba(4, 21, 13, .34) 72%, rgba(4, 21, 13, .22) 100%); content: ''; inset: 0; position: absolute; z-index: -1; }
+.plazy-hero::after { background: linear-gradient(0deg, rgba(4, 24, 11, .75), transparent 31%); content: ''; inset: 0; pointer-events: none; position: absolute; z-index: -1; }
+.plazy-hero-inner { margin: 0 auto; max-width: 1180px; width: calc(100% - 48px); }
+.plazy-hero-kicker, .plazy-section-kicker { color: #a9eab9; font-size: 11px; font-weight: 800; letter-spacing: 2px; margin: 0 0 20px; }
+.plazy-hero-kicker { align-items: center; display: flex; gap: 10px; }
+.plazy-live-dot { animation: plazy-pulse 2.6s ease-in-out infinite; background: #7deaa0; border-radius: 50%; box-shadow: 0 0 0 4px rgba(125, 234, 160, .14); height: 7px; width: 7px; }
+@keyframes plazy-pulse { 50% { box-shadow: 0 0 0 8px rgba(125, 234, 160, .04); } }
+.plazy-hero h1 { color: #fff; font-size: clamp(40px, 5.1vw, 72px); font-weight: 750; line-height: 1.08; margin: 0; max-width: 740px; }
+.plazy-hero-copy { color: rgba(238, 252, 240, .84); font-size: clamp(16px, 1.45vw, 19px); line-height: 1.65; margin: 24px 0 0; max-width: 550px; }
+.plazy-hero-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 20px; margin-top: 32px; }
+.plazy-cta-primary { align-items: center; background: #38ad65; border: 1px solid rgba(220, 255, 227, .43); border-radius: 8px; box-shadow: 0 12px 30px rgba(0, 24, 7, .24); color: #fff; display: inline-flex; font-size: 14px; font-weight: 800; gap: 16px; justify-content: center; min-height: 52px; padding: 13px 20px; text-decoration: none; transition: background-color 180ms ease, transform 180ms ease; }
+.plazy-cta-primary:hover { background: #4ac178; color: #fff; transform: translateY(-2px); }
+.plazy-cta-secondary { align-items: center; color: #f4fff4; display: inline-flex; font-size: 14px; font-weight: 700; gap: 11px; padding: 12px 0; text-decoration: none; }
+.plazy-cta-secondary:hover { color: #b9eec8; }
+.plazy-hero-caption { align-items: center; bottom: 24px; color: rgba(238, 252, 240, .65); display: flex; font-size: 10px; font-weight: 800; gap: 12px; left: 24px; letter-spacing: 2px; position: absolute; }
+.plazy-caption-line { background: #7ed99a; height: 1px; width: 34px; }
+.plazy-story-section { background: #edf4ed; color: #10271a; padding: clamp(72px, 8vw, 112px) 0; }
+.plazy-story-section .plazy-section-kicker { color: #238250; }
+.plazy-story-layout { align-items: start; display: grid; gap: clamp(36px, 8vw, 120px); grid-template-columns: 1.15fr 1fr; }
+.plazy-story-layout h2, .plazy-section-heading h2, .plazy-steps h2, .plazy-final-cta h2 { font-size: clamp(30px, 3.4vw, 46px); font-weight: 750; line-height: 1.17; margin: 0; }
+.plazy-story-copy { border-left: 2px solid #6fbe8b; padding-left: 28px; }
+.plazy-story-copy p { color: #466153; font-size: 16px; line-height: 1.75; margin: 0 0 18px; }
+.plazy-story-copy p:last-child { margin-bottom: 0; }
+.plazy-possibilities { background: #0a2113; padding: clamp(72px, 8vw, 108px) 0; }
+.plazy-section-heading { margin-bottom: 34px; }
+.plazy-section-heading h2 { color: #f5fff5; max-width: 650px; }
+.plazy-feature-grid { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.plazy-feature { background: rgba(214, 255, 220, .06); border: 1px solid rgba(214, 255, 220, .15); border-radius: 8px; min-height: 260px; padding: 27px; position: relative; transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease; }
+.plazy-feature:hover { background: rgba(214, 255, 220, .1); border-color: rgba(165, 236, 182, .34); transform: translateY(-3px); }
+.plazy-feature-icon { align-items: center; background: rgba(73, 181, 104, .17); border: 1px solid rgba(133, 222, 158, .32); border-radius: 8px; color: #a7edb9; display: inline-flex; font-size: 19px; height: 46px; justify-content: center; width: 46px; }
+.plazy-feature-index { color: rgba(212, 250, 219, .37); font-size: 12px; font-weight: 800; position: absolute; right: 27px; top: 31px; }
+.plazy-feature h3 { color: #fff; font-size: 20px; margin: 39px 0 10px; }
+.plazy-feature p { color: rgba(227, 247, 231, .69); font-size: 14px; line-height: 1.65; margin: 0; max-width: 300px; }
+.plazy-steps { background: #e5eee6; color: #10271a; padding: clamp(72px, 8vw, 112px) 0; }
+.plazy-steps .plazy-section-kicker { color: #238250; }
+.plazy-steps-layout { display: grid; gap: clamp(40px, 10vw, 145px); grid-template-columns: .9fr 1.1fr; }
+.plazy-steps-layout > div > p:last-child { color: #516c59; font-size: 16px; line-height: 1.6; margin-top: 22px; }
+.plazy-steps ol { list-style: none; margin: 0; padding: 0; }
+.plazy-steps li { border-bottom: 1px solid rgba(28, 84, 47, .19); display: grid; gap: 25px; grid-template-columns: 35px 1fr; padding: 20px 0; }
+.plazy-steps li:first-child { padding-top: 0; }
+.plazy-steps li > span { color: #238250; font-size: 12px; font-weight: 800; padding-top: 4px; }
+.plazy-steps li h3 { font-size: 18px; margin: 0 0 7px; }
+.plazy-steps li p { color: #56715e; font-size: 14px; line-height: 1.6; margin: 0; }
+.plazy-final-cta { background: linear-gradient(100deg, #0b3920, #0b2416 75%); padding: clamp(74px, 8vw, 108px) 0; text-align: center; }
+.plazy-final-cta h2 { color: #fff; }
+.plazy-final-cta p:not(.plazy-section-kicker) { color: #c0dec8; font-size: 16px; margin: 15px 0 27px; }
+
+@media (max-width: 700px) {
+    .plazy-site-header { gap: 12px; height: 64px; padding: 0 16px; }
+    .plazy-site-header .plazy-global-name { display: none; }
+    .plazy-site-nav { flex: 1; justify-content: flex-start; margin-left: 8px; }
+    .plazy-header-actions { gap: 13px; }
+    .plazy-header-register { padding: 9px 12px; }
+    .plazy-account-menu summary { gap: 6px; }
+    .plazy-account-avatar { display: none; }
+    .plazy-site-shell > .plazy-auth-page, .plazy-site-shell > .plazy-choice-page { min-height: calc(100svh - 138px); }
+    .plazy-section-wrap, .plazy-hero-inner { width: calc(100% - 36px); }
+    .plazy-hero { background-position: 55% center; min-height: calc(100svh - 116px); padding: 58px 0 80px; }
+    .plazy-hero::before { background: linear-gradient(90deg, rgba(2, 19, 9, .92), rgba(4, 24, 12, .63)); }
+    .plazy-hero h1 { font-size: clamp(38px, 10vw, 54px); }
+    .plazy-hero-copy { font-size: 16px; line-height: 1.55; }
+    .plazy-hero-caption { left: 18px; }
+    .plazy-story-layout, .plazy-steps-layout { gap: 28px; grid-template-columns: 1fr; }
+    .plazy-feature-grid { grid-template-columns: 1fr; }
+    .plazy-feature { min-height: 0; padding: 23px; }
+    .plazy-feature h3 { margin-top: 24px; }
+}
+
+@media (max-width: 380px) {
+    .plazy-site-nav { display: none; }
+    .plazy-site-header .plazy-global-name { display: inline; }
+    .plazy-account-menu summary { font-size: 12px; }
+    .plazy-hero-actions { align-items: flex-start; flex-direction: column; gap: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .plazy-live-dot { animation: none; }
+    .plazy-feature, .plazy-cta-primary, .plazy-header-register { transition: none; }
 }

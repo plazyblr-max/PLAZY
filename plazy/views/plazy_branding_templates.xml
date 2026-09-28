@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="web_layout_branding" inherit_id="web.layout" name="Plazy Browser Branding" priority="100">
+        <xpath expr="//title" position="replace">
+            <title t-out="title or 'Plazy Football'"/>
+        </xpath>
+        <xpath expr="//link[@rel='shortcut icon']" position="replace">
+            <link rel="icon" type="image/svg+xml" href="/plazy/static/src/img/plazy-mark.svg"/>
+            <link rel="alternate icon" type="image/x-icon" href="/plazy/static/src/img/favicon.ico"/>
+            <link rel="apple-touch-icon" href="/plazy/static/src/img/plazy-touch-icon.png"/>
+        </xpath>
+    </template>
+
+    <template id="login_metadata_branding" inherit_id="web.login" name="Plazy Login Metadata" priority="100">
+        <xpath expr="//meta[@property='og:site_name']" position="attributes">
+            <attribute name="content">Plazy Football</attribute>
+        </xpath>
+        <xpath expr="//meta[@property='og:description']" position="attributes">
+            <attribute name="content">Find players, join teams, play football, and build your Bengaluru football community.</attribute>
+        </xpath>
+        <xpath expr="//meta[@property='og:image:alt']" position="attributes">
+            <attribute name="content">Plazy Football community</attribute>
+        </xpath>
+        <xpath expr="//meta[@name='twitter:site']" position="replace"/>
+        <xpath expr="//meta[@name='twitter:description']" position="attributes">
+            <attribute name="content">Find players, join teams, play football, and build your Bengaluru football community.</attribute>
+        </xpath>
+        <xpath expr="//meta[@name='twitter:image:alt']" position="attributes">
+            <attribute name="content">Plazy Football community</attribute>
+        </xpath>
+    </template>
+
+    <template id="brand_promotion" inherit_id="web.brand_promotion" name="Remove Platform Brand Promotion" priority="100">
+        <xpath expr="//div[hasclass('o_brand_promotion')]" position="replace"/>
+    </template>
+
+</odoo>

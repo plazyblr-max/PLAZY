@@ -11,6 +11,7 @@
         'security/ir_access.xml',
         'data/plazy_otp_email_template.xml',
         'views/player_team_views.xml',
+        'views/plazy_branding_templates.xml',
         'views/plazy_auth_templates.xml',
     ],
     'assets': {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Plazy Football</title>
+  <rect width="128" height="128" rx="30" fill="#279d58"/>
+  <rect x="5" y="5" width="118" height="118" rx="25" fill="none" stroke="#e8ffed" stroke-opacity=".62" stroke-width="4"/>
+  <path fill="#ffffff" d="M43 27h26c23 0 37 12 37 32 0 21-15 34-39 34H57v18H43V27Zm14 13v40h11c15 0 23-7 23-20 0-13-8-20-23-20H57Z"/>
+</svg>
