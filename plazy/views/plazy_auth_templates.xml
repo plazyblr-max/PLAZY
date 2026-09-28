@@ -45,8 +45,9 @@
     <template id="website_layout" name="Plazy Website Layout">
         <t t-set="title" t-value="title or 'Plazy Football'"/>
         <t t-call="web.frontend_layout" html_data="{'style': 'height: 100%;'}" body_classname.f="plazy-body" no_header="True" no_footer="True" head="head">
-            <t t-set="instagram_url" t-value="request.env.company.social_instagram or ''"/>
-            <t t-set="whatsapp_url" t-value="request.env.company.social_whatsapp or ''"/>
+            <t t-set="company" t-value="request.env.company"/>
+            <t t-set="instagram_url" t-value="company['social_instagram'] if 'social_instagram' in company._fields else ''"/>
+            <t t-set="whatsapp_url" t-value="company['social_whatsapp'] if 'social_whatsapp' in company._fields else ''"/>
             <div class="plazy-site-shell"><t t-call="plazy.portal_header"/><t t-out="0"/><t t-call="plazy.portal_footer"/></div>
         </t>
     </template>

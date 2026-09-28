@@ -1,7 +1,7 @@
 {
     'name': 'Plazy',
     'summary': 'Player and team registration for Plazy',
-    'version': '20.0.2.0.0',
+    'version': '20.0.2.0.1',
     'category': 'Authentication',
     'license': 'LGPL-3',
     'author': 'Plazy',

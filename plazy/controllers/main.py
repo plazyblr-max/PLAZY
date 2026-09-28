@@ -288,7 +288,13 @@ class PlazyWebsite(http.Controller):
     @staticmethod
     def _portal_values(profile, portal_type):
         company = request.env.company
-        whatsapp_value = (company.social_whatsapp or company.phone or '').strip()
+        instagram_value = company['social_instagram'] if 'social_instagram' in company._fields else ''
+        whatsapp_value = (
+            company['social_whatsapp']
+            if 'social_whatsapp' in company._fields
+            else company.phone
+        )
+        whatsapp_value = (whatsapp_value or company.phone or '').strip()
         if whatsapp_value and not whatsapp_value.startswith(('http://', 'https://')):
             whatsapp_value = re.sub(r'[^0-9]', '', whatsapp_value)
             whatsapp_value = f'https://wa.me/{whatsapp_value}' if whatsapp_value else ''
@@ -297,7 +303,7 @@ class PlazyWebsite(http.Controller):
             portal_type: profile,
             'portal_type': portal_type,
             'company': company,
-            'instagram_url': company.social_instagram or '',
+            'instagram_url': instagram_value or '',
             'whatsapp_url': whatsapp_value,
             'user_first_name': user_name.split()[0] if user_name else _('Player'),
         }
