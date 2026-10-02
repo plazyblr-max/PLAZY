@@ -129,4 +129,52 @@ whenReady(() => {
             button.setAttribute('aria-label', reveal ? 'Hide password' : 'Show password');
         });
     });
+    document.querySelectorAll('.plazy-team-invite-form').forEach((form) => {
+        const email = form.querySelector('input[name="email"]');
+        const message = form.querySelector('.plazy-email-message');
+        let validation = {valid: false};
+        let timer;
+        const renderValidation = (result) => {
+            validation = result;
+            email.classList.toggle('is-invalid', Boolean(email.value.trim()) && !result.valid);
+            email.setCustomValidity(result.valid ? '' : (result.message || 'Enter a valid email address.'));
+            message.textContent = result.message || '';
+            message.classList.toggle('is-visible', Boolean(result.message));
+        };
+        const validateInvitationEmail = async () => {
+            const value = email.value.trim();
+            if (!value) {
+                renderValidation({valid: false, message: ''});
+                return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                renderValidation({valid: false, message: 'Enter a valid email address.'});
+                return;
+            }
+            try {
+                const csrfToken = form.querySelector('input[name="csrf_token"]').value;
+                const response = await fetch('/plazy/team/player-email-validation', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+                    body: JSON.stringify({jsonrpc: '2.0', method: 'call', params: {email: value}, id: Date.now()}),
+                });
+                const payload = await response.json();
+                renderValidation(payload.result || {valid: false, message: 'Unable to validate this email right now.'});
+            } catch (_error) {
+                renderValidation({valid: false, message: 'Unable to validate this email right now.'});
+            }
+        };
+        email.addEventListener('input', () => {
+            window.clearTimeout(timer);
+            timer = window.setTimeout(validateInvitationEmail, 300);
+        });
+        email.addEventListener('blur', validateInvitationEmail);
+        form.addEventListener('submit', (event) => {
+            if (!validation.valid) {
+                event.preventDefault();
+                validateInvitationEmail();
+                email.focus();
+            }
+        });
+    });
 });

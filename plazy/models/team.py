@@ -14,6 +14,7 @@ class PlazyTeam(models.Model):
     locality = fields.Char(string='Bangalore Locality', required=True)
     pincode = fields.Char(string='PIN Code', required=True)
     user_id = fields.Many2one('res.users', string='User', ondelete='set null', copy=False)
+    player_ids = fields.Many2many('plazy.player', 'plazy_player_team_rel', 'team_id', 'player_id', string='Players', copy=False)
 
     @api.constrains('email', 'mobile', 'pincode')
     def _check_team_details(self):

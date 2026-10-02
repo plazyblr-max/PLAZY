@@ -1,4 +1,5 @@
 import re
+from urllib.parse import urlencode
 
 from odoo import _, fields, http, tools
 from odoo.exceptions import ValidationError
@@ -236,7 +237,108 @@ class PlazyWebsite(http.Controller):
         team = request.env['plazy.team'].sudo().search([('user_id', '=', request.env.user.id)], limit=1)
         if not team:
             return request.not_found()
-        return request.render('plazy.team_dashboard', self._portal_values(team, 'team'))
+        values = self._portal_values(team, 'team')
+        invitations = request.env['plazy.team.player.invitation'].sudo().search([('team_id', '=', team.id)])
+        invitations._expire_if_needed()
+        values['invitations'] = invitations
+        return request.render('plazy.team_dashboard', values)
+
+    @http.route('/plazy/team/player-email-validation', type='jsonrpc', auth='user', website=True, sitemap=False, methods=['POST'])
+    def validate_team_player_email(self, email=None):
+        team = self._current_team()
+        if not team:
+            return {'valid': False, 'message': _('Only a team manager can invite players.')}
+        return request.env['plazy.team.player.invitation'].validate_email_for_team(request.env, team, email)
+
+    @http.route('/plazy/team/players/invite', type='http', auth='user', website=True, sitemap=False, methods=['POST'])
+    def invite_team_player(self, **post):
+        team = self._current_team()
+        if not team:
+            return request.not_found()
+        try:
+            player_name = (post.get('player_name') or '').strip()
+            mobile = (post.get('mobile') or '').strip()
+            if not player_name or not mobile:
+                raise ValidationError(_('Player name and mobile number are required.'))
+            request.env['plazy.team.player.invitation'].create_and_send(request.env, team, post)
+            request.session['plazy_team_invitation_message'] = _('Invitation sent to %(email)s.') % {
+                'email': (post.get('email') or '').strip().lower(),
+            }
+        except ValidationError as error:
+            request.session['plazy_team_invitation_error'] = error.args[0]
+        return request.redirect('/plazy/team/dashboard')
+
+    @http.route('/plazy/team/players/invitation/<int:invitation_id>/resend', type='http', auth='user', website=True, sitemap=False, methods=['POST'])
+    def resend_team_player_invitation(self, invitation_id, **_post):
+        invitation = self._team_invitation_for_current_team(invitation_id)
+        if not invitation:
+            return request.not_found()
+        try:
+            invitation.resend()
+            request.session['plazy_team_invitation_message'] = _('Invitation resent to %(email)s.') % {'email': invitation.email}
+        except ValidationError as error:
+            request.session['plazy_team_invitation_error'] = error.args[0]
+        return request.redirect('/plazy/team/dashboard')
+
+    @http.route('/plazy/team/players/invitation/<int:invitation_id>/cancel', type='http', auth='user', website=True, sitemap=False, methods=['POST'])
+    def cancel_team_player_invitation(self, invitation_id, **_post):
+        invitation = self._team_invitation_for_current_team(invitation_id)
+        if not invitation:
+            return request.not_found()
+        if invitation.status == 'pending':
+            invitation.status = 'cancelled'
+            request.session['plazy_team_invitation_message'] = _('Invitation cancelled.')
+        return request.redirect('/plazy/team/dashboard')
+
+    @http.route('/plazy/player/invitation', type='http', auth='public', website=True, sitemap=False, methods=['GET', 'POST'])
+    def player_invitation(self, token=None, **post):
+        ensure_db()
+        invitation = request.env['plazy.team.player.invitation'].from_token(request.env, token)
+        if not invitation or not invitation.is_usable():
+            return request.render('plazy.player_invitation_invalid')
+        existing_user = invitation.existing_user_id.exists() or request.env['res.users'].sudo().search([
+            ('login', '=ilike', invitation.email),
+        ], limit=1)
+        current_user = request.env.user
+        if request.httprequest.method == 'POST' and post.get('action') == 'continue':
+            if existing_user:
+                if not current_user._is_public() and current_user.id == existing_user.id:
+                    invitation.accept()
+                    return request.redirect('/plazy/player/dashboard')
+                login_redirect = '/plazy/player/invitation?' + urlencode({'token': token})
+                return request.redirect('/web/login?' + urlencode({'redirect': login_redirect}))
+            return request.redirect('/plazy/player/invitation/set-password?' + urlencode({'token': token}))
+        return request.render('plazy.player_invitation_onboarding', {
+            'invitation': invitation,
+            'existing_player': bool(existing_user),
+            'signed_in_as_invitee': not current_user._is_public() and current_user.id == existing_user.id,
+            'token': token,
+        })
+
+    @http.route('/plazy/player/invitation/set-password', type='http', auth='public', website=True, sitemap=False, methods=['GET', 'POST'])
+    def set_invited_player_password(self, token=None, **post):
+        ensure_db()
+        invitation = request.env['plazy.team.player.invitation'].from_token(request.env, token)
+        if not invitation or not invitation.is_usable():
+            return request.render('plazy.player_invitation_invalid')
+        existing_user = invitation.existing_user_id.exists() or request.env['res.users'].sudo().search([
+            ('login', '=ilike', invitation.email),
+        ], limit=1)
+        if existing_user:
+            return request.redirect('/plazy/player/invitation?' + urlencode({'token': token}))
+        values = {'invitation': invitation, 'token': token}
+        if request.httprequest.method == 'POST':
+            try:
+                password = self._registration_password(post)
+                with request.env.cr.savepoint():
+                    user = invitation.accept(password)
+                authenticate(request.session, request.env, {
+                    'login': user.login, 'password': password, 'type': 'password',
+                })
+                return request.redirect('/plazy/player/dashboard')
+            except ValidationError as error:
+                values['error'] = error.args[0]
+        return request.render('plazy.player_invitation_password', values)
 
     @http.route('/plazy/signup', type='http', auth='public', website=True, sitemap=False)
     def legacy_signup(self, **_kwargs):
@@ -299,7 +401,7 @@ class PlazyWebsite(http.Controller):
             whatsapp_value = re.sub(r'[^0-9]', '', whatsapp_value)
             whatsapp_value = f'https://wa.me/{whatsapp_value}' if whatsapp_value else ''
         user_name = (request.env.user.name or '').strip()
-        return {
+        values = {
             portal_type: profile,
             'portal_type': portal_type,
             'company': company,
@@ -307,6 +409,25 @@ class PlazyWebsite(http.Controller):
             'whatsapp_url': whatsapp_value,
             'user_first_name': user_name.split()[0] if user_name else _('Player'),
         }
+        if portal_type == 'team':
+            values['invitation_message'] = request.session.pop('plazy_team_invitation_message', False)
+            values['invitation_error'] = request.session.pop('plazy_team_invitation_error', False)
+        return values
+
+    @staticmethod
+    def _current_team():
+        if not request.env.user.has_group('plazy.team'):
+            return False
+        return request.env['plazy.team'].sudo().search([('user_id', '=', request.env.user.id)], limit=1)
+
+    @staticmethod
+    def _team_invitation_for_current_team(invitation_id):
+        team = PlazyWebsite._current_team()
+        if not team:
+            return False
+        return request.env['plazy.team.player.invitation'].sudo().search([
+            ('id', '=', invitation_id), ('team_id', '=', team.id),
+        ], limit=1)
 
     @staticmethod
     def _registration_password(post):

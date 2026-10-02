@@ -197,6 +197,7 @@
 .plazy-form input::placeholder { color: rgba(222, 245, 226, .48); }
 .plazy-form input:focus { background: rgba(4, 42, 21, .72); border-color: #69c887; box-shadow: 0 0 0 3px rgba(105, 200, 135, .14); outline: 0; }
 .plazy-form input.is-invalid { border-color: #e49393; box-shadow: 0 0 0 3px rgba(228, 112, 112, .14); }
+.plazy-form input[readonly] { background: rgba(225, 255, 231, .09); color: rgba(243, 255, 245, .8); cursor: default; }
 .plazy-email-message { color: #ffd2d2; display: none; font-size: 12px; margin: 7px 0 0; }
 .plazy-email-message.is-visible { display: block; }
 .plazy-password-field input { padding-right: 61px !important; }
@@ -239,6 +240,24 @@
 .plazy-form-success { border: 1px solid; border-radius: 9px; font-size: 13px; margin: 17px 0 0; padding: 10px 12px; }
 .plazy-form-error { background: rgba(105, 20, 20, .46); border-color: rgba(255, 199, 199, .3); color: #ffe9e9; }
 .plazy-form-success { background: rgba(25, 109, 56, .42); border-color: rgba(190, 255, 207, .28); color: #e8ffed; }
+
+.plazy-team-invitations { margin-top: 20px; }
+.plazy-team-invitations .plazy-form { max-width: 520px; }
+.plazy-invitation-list { display: grid; gap: 10px; margin-top: 14px; }
+.plazy-invitation-row { align-items: center; border-top: 1px solid rgba(219, 255, 225, .16); display: flex; gap: 16px; justify-content: space-between; padding: 13px 0; }
+.plazy-invitation-row strong, .plazy-invitation-row small { display: block; }
+.plazy-invitation-row small { color: rgba(229, 249, 234, .65); font-size: 12px; margin-top: 3px; }
+.plazy-invitation-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 7px; justify-content: flex-end; }
+.plazy-invitation-status { border: 1px solid rgba(219, 255, 225, .24); border-radius: 5px; color: #e5f9ea; font-size: 11px; padding: 4px 6px; white-space: nowrap; }
+.plazy-invitation-status.is-accepted { border-color: rgba(130, 221, 151, .54); color: #baf5c7; }
+.plazy-invitation-status.is-expired, .plazy-invitation-status.is-cancelled { border-color: rgba(255, 199, 199, .3); color: #ffd2d2; }
+.plazy-inline-action { background: transparent; border: 1px solid rgba(219, 255, 225, .25); border-radius: 5px; color: #e5f9ea; cursor: pointer; font-size: 11px; padding: 4px 7px; }
+.plazy-inline-action:hover { background: rgba(237, 255, 241, .09); }
+
+@media (max-width: 560px) {
+    .plazy-invitation-row { align-items: flex-start; flex-direction: column; }
+    .plazy-invitation-actions { justify-content: flex-start; }
+}
 
 .plazy-role-picker { border-top: 1px solid rgba(219, 255, 225, .17); margin-top: 27px; padding-top: 20px; }
 .plazy-role-picker p { font-size: 12px; margin-bottom: 12px; }
