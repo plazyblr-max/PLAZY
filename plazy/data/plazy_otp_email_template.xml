@@ -64,5 +64,26 @@
                 </div>
             </t></field>
         </record>
+        <record id="mail_template_team_approval_requested" model="mail.template">
+            <field name="name">Plazy: Team Approval Request Received</field>
+            <field name="model_id" ref="model_plazy_team"/>
+            <field name="subject">Your Team Approval Request Has Been Received</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html"><t><div style="background:#f4f8f5;padding:28px;font-family:Arial,sans-serif;color:#183322"><div style="max-width:540px;margin:auto;background:#fff;border:1px solid #dcebdd;border-radius:12px;padding:28px"><p style="color:#2a9456;font-weight:700;letter-spacing:1px">PLAZY FOOTBALL</p><h2>Approval request received</h2><p>Hi <t t-out="object.manager_name or object.name"/>,</p><p>We have received the approval request for <strong><t t-out="object.name"/></strong>.</p><p>Our team will review your team details and player list. Current status: <strong>Waiting for Approval</strong>.</p><p>Plazy</p></div></div></t></field>
+        </record>
+        <record id="mail_template_team_approved" model="mail.template">
+            <field name="name">Plazy: Team Approved</field>
+            <field name="model_id" ref="model_plazy_team"/>
+            <field name="subject">{{ object.name }} Is Approved!</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html"><t><div style="background:#f4f8f5;padding:28px;font-family:Arial,sans-serif;color:#183322"><div style="max-width:540px;margin:auto;background:#fff;border:1px solid #dcebdd;border-radius:12px;padding:28px"><p style="color:#2a9456;font-weight:700;letter-spacing:1px">PLAZY FOOTBALL</p><h2>Great news!</h2><p>Hi <t t-out="object.manager_name or object.name"/>,</p><p><strong><t t-out="object.name"/></strong> has been approved by Plazy and is now officially active on the platform.</p><p>Play together. Grow together.</p><p>Plazy</p></div></div></t></field>
+        </record>
+        <record id="mail_template_team_rejected" model="mail.template">
+            <field name="name">Plazy: Team Changes Required</field>
+            <field name="model_id" ref="model_plazy_team"/>
+            <field name="subject">Update Required for {{ object.name }}</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html"><t><div style="background:#f4f8f5;padding:28px;font-family:Arial,sans-serif;color:#183322"><div style="max-width:540px;margin:auto;background:#fff;border:1px solid #dcebdd;border-radius:12px;padding:28px"><p style="color:#2a9456;font-weight:700;letter-spacing:1px">PLAZY FOOTBALL</p><h2>Update required</h2><p>Hi <t t-out="object.manager_name or object.name"/>,</p><p>We reviewed <strong><t t-out="object.name"/></strong>, and some changes are needed before approval.</p><p style="background:#fff4f4;border-left:3px solid #c95b5b;padding:12px"><strong>Reason:</strong> <t t-out="object.rejection_reason"/></p><p>Please update the required information and submit again.</p><p>Plazy</p></div></div></t></field>
+        </record>
     </data>
 </odoo>

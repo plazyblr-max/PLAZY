@@ -21,12 +21,15 @@ class PlazyTeamPlayerInvitation(models.Model):
     mobile = fields.Char(required=True)
     position = fields.Char()
     status = fields.Selection([
-        ('pending', 'Invitation Pending'),
+        ('sent', 'Invitation Sent'),
         ('accepted', 'Accepted'),
+        ('joined', 'Joined'),
         ('expired', 'Expired'),
+        ('failed', 'Failed'),
         ('cancelled', 'Cancelled'),
-    ], required=True, default='pending', index=True, copy=False)
+    ], required=True, default='sent', index=True, copy=False)
     token_hash = fields.Char(required=True, index=True, copy=False)
+    email_token = fields.Char(copy=False, groups='base.group_system')
     expires_at = fields.Datetime(required=True, copy=False)
     accepted_at = fields.Datetime(copy=False)
 
@@ -62,11 +65,11 @@ class PlazyTeamPlayerInvitation(models.Model):
             result['message'] = _('This player already belongs to your team.')
             return result
         invitation = env['plazy.team.player.invitation'].sudo().search([
-            ('team_id', '=', team.id), ('email', '=ilike', email), ('status', '=', 'pending'),
+            ('team_id', '=', team.id), ('email', '=ilike', email), ('status', '=', 'sent'),
         ], limit=1)
         if invitation:
             invitation._expire_if_needed()
-            if invitation.status == 'pending':
+            if invitation.status == 'sent':
                 result['message'] = _('There is already a pending invitation for this email.')
                 return result
         result.update({
@@ -106,9 +109,15 @@ class PlazyTeamPlayerInvitation(models.Model):
             'mobile': (values.get('mobile') or '').strip(),
             'position': (values.get('position') or '').strip(),
             'token_hash': cls._token_hash(token),
+            'email_token': token,
             'expires_at': fields.Datetime.now() + timedelta(days=7),
         })
-        invitation._send(token)
+        try:
+            invitation._send(token)
+        except Exception:
+            invitation.status = 'failed'
+            raise
+        team._refresh_registration_status()
         return invitation
 
     def _send(self, token):
@@ -116,9 +125,14 @@ class PlazyTeamPlayerInvitation(models.Model):
         sender = self._sender_address(self.env)
         self.env.ref('plazy.mail_template_team_player_invitation').sudo().with_context(invitation_token=token).send_mail(
             self.id, force_send=True, raise_exception=True,
-            email_values={'email_from': sender, 'reply_to': sender},
+            # Explicitly set the recipient: the Plazy administrator is the sender,
+            # never the person receiving the team invitation.
+            email_values={'email_from': sender, 'reply_to': sender, 'email_to': self.email},
         )
-        # The raw token only exists in the email rendering context and URL, never in the database.
+        # Odoo renders mail records in a fresh environment, so context alone is
+        # insufficient. Clear this transient token immediately after rendering;
+        # server validation always uses token_hash.
+        self.email_token = False
         return token
 
     def invitation_url(self, token):
@@ -129,10 +143,10 @@ class PlazyTeamPlayerInvitation(models.Model):
 
     def get_invitation_url(self):
         """Expose the ephemeral token to the mail template, never as a stored field."""
-        return self.invitation_url(self.env.context.get('invitation_token'))
+        return self.invitation_url(self.env.context.get('invitation_token') or self.email_token)
 
     def _expire_if_needed(self):
-        for invitation in self.filtered(lambda item: item.status == 'pending' and item.expires_at <= fields.Datetime.now()):
+        for invitation in self.filtered(lambda item: item.status == 'sent' and item.expires_at <= fields.Datetime.now()):
             invitation.status = 'expired'
 
     @classmethod
@@ -147,16 +161,17 @@ class PlazyTeamPlayerInvitation(models.Model):
     def is_usable(self):
         self.ensure_one()
         self._expire_if_needed()
-        return self.status == 'pending' and bool(self.team_id) and bool(self.email)
+        return self.status == 'sent' and bool(self.team_id) and bool(self.email)
 
     def resend(self):
         self.ensure_one()
-        if self.status not in ('pending', 'expired'):
-            raise ValidationError(_('Only pending or expired invitations can be resent.'))
+        if self.status not in ('sent', 'expired', 'failed'):
+            raise ValidationError(_('Only sent, expired, or failed invitations can be resent.'))
         token = secrets.token_urlsafe(32)
         self.write({
-            'status': 'pending',
+            'status': 'sent',
             'token_hash': self._token_hash(token),
+            'email_token': token,
             'expires_at': fields.Datetime.now() + timedelta(days=7),
             'accepted_at': False,
         })
@@ -204,3 +219,10 @@ class PlazyTeamPlayerInvitation(models.Model):
             'accepted_at': fields.Datetime.now(),
         })
         return user
+
+    def mark_joined(self):
+        for invitation in self:
+            if invitation.status == 'accepted':
+                invitation.status = 'joined'
+                invitation.team_id._refresh_registration_status()
+        return True

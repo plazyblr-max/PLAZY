@@ -56,6 +56,9 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
+                <field name="team_type"/>
+                <field name="registration_status"/>
+                <field name="joined_player_count"/>
                 <field name="email"/>
                 <field name="mobile"/>
                 <field name="locality"/>
@@ -70,13 +73,29 @@
                 <sheet>
                     <group>
                         <field name="name"/>
+                        <field name="manager_name"/>
                         <field name="email"/>
                         <field name="mobile"/>
+                        <field name="team_type"/>
+                        <field name="logo" widget="image"/>
                         <field name="locality"/>
                         <field name="pincode"/>
+                        <field name="registration_status" readonly="1"/>
+                        <field name="joined_player_count" readonly="1"/>
+                        <field name="required_player_count" readonly="1"/>
+                        <field name="approval_requested_at" readonly="1"/>
+                        <field name="rejection_reason"/>
                         <field name="user_id"/>
                     </group>
+                    <group string="Players">
+                        <field name="invitation_ids" readonly="1"/>
+                        <field name="player_ids" readonly="1"/>
+                    </group>
                 </sheet>
+                <footer>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary" invisible="registration_status != 'waiting'" groups="base.group_system"/>
+                    <button name="action_reject" type="object" string="Reject" invisible="registration_status != 'waiting'" groups="base.group_system"/>
+                </footer>
             </form>
         </field>
     </record>

@@ -1,4 +1,5 @@
 import re
+import base64
 from urllib.parse import urlencode
 
 from odoo import _, fields, http, tools
@@ -216,6 +217,9 @@ class PlazyWebsite(http.Controller):
             'registered_user_count': users.search_count([
                 '|', ('group_ids', 'in', player_group.ids), ('group_ids', 'in', team_group.ids),
             ]),
+            'pending_approval_teams': request.env['plazy.team'].sudo().search([
+                ('registration_status', '=', 'waiting'),
+            ]),
         })
         return request.render('plazy.admin_dashboard', values)
 
@@ -256,6 +260,8 @@ class PlazyWebsite(http.Controller):
         if not team:
             return request.not_found()
         try:
+            if team.player_invitation_count >= 10:
+                raise ValidationError(_('A team can invite a maximum of 10 players.'))
             player_name = (post.get('player_name') or '').strip()
             mobile = (post.get('mobile') or '').strip()
             if not player_name or not mobile:
@@ -285,7 +291,7 @@ class PlazyWebsite(http.Controller):
         invitation = self._team_invitation_for_current_team(invitation_id)
         if not invitation:
             return request.not_found()
-        if invitation.status == 'pending':
+        if invitation.status == 'sent':
             invitation.status = 'cancelled'
             request.session['plazy_team_invitation_message'] = _('Invitation cancelled.')
         return request.redirect('/plazy/team/dashboard')
@@ -304,6 +310,7 @@ class PlazyWebsite(http.Controller):
             if existing_user:
                 if not current_user._is_public() and current_user.id == existing_user.id:
                     invitation.accept()
+                    invitation.mark_joined()
                     return request.redirect('/plazy/player/dashboard')
                 login_redirect = '/plazy/player/invitation?' + urlencode({'token': token})
                 return request.redirect('/web/login?' + urlencode({'redirect': login_redirect}))
@@ -335,10 +342,45 @@ class PlazyWebsite(http.Controller):
                 authenticate(request.session, request.env, {
                     'login': user.login, 'password': password, 'type': 'password',
                 })
+                invitation.mark_joined()
                 return request.redirect('/plazy/player/dashboard')
             except ValidationError as error:
                 values['error'] = error.args[0]
         return request.render('plazy.player_invitation_password', values)
+
+    @http.route('/plazy/team/request-approval', type='http', auth='user', website=True, sitemap=False, methods=['POST'])
+    def request_team_approval(self, **_post):
+        team = self._current_team()
+        if not team:
+            return request.not_found()
+        try:
+            team.action_request_approval()
+            request.session['plazy_team_invitation_message'] = _('Your team approval request has been submitted.')
+        except ValidationError as error:
+            request.session['plazy_team_invitation_error'] = error.args[0]
+        return request.redirect('/plazy/team/dashboard')
+
+    @http.route('/plazy/admin/team/<int:team_id>/approve', type='http', auth='user', website=True, sitemap=False, methods=['POST'])
+    def approve_team(self, team_id, **_post):
+        if not request.env.user.has_group('base.group_system'):
+            return request.not_found()
+        team = request.env['plazy.team'].sudo().browse(team_id).exists()
+        if team:
+            team.action_approve()
+        return request.redirect('/plazy/admin/dashboard')
+
+    @http.route('/plazy/admin/team/<int:team_id>/reject', type='http', auth='user', website=True, sitemap=False, methods=['POST'])
+    def reject_team(self, team_id, reason=None, **_post):
+        if not request.env.user.has_group('base.group_system'):
+            return request.not_found()
+        team = request.env['plazy.team'].sudo().browse(team_id).exists()
+        if team:
+            try:
+                team.write({'rejection_reason': reason})
+                team.action_reject()
+            except ValidationError:
+                pass
+        return request.redirect('/plazy/admin/dashboard')
 
     @http.route('/plazy/signup', type='http', auth='public', website=True, sitemap=False)
     def legacy_signup(self, **_kwargs):
@@ -452,10 +494,16 @@ class PlazyWebsite(http.Controller):
 
     @staticmethod
     def _team_values(post):
-        return {
+        values = {
             'name': (post.get('name') or '').strip(),
+            'manager_name': (post.get('manager_name') or '').strip(),
             'email': (post.get('email') or '').strip().lower(),
             'mobile': (post.get('mobile') or '').strip(),
             'locality': (post.get('locality') or '').strip(),
             'pincode': (post.get('pincode') or '').strip(),
+            'team_type': post.get('team_type') if post.get('team_type') in ('five_a_side', 'seven_a_side') else 'five_a_side',
         }
+        logo = post.get('logo')
+        if logo and getattr(logo, 'filename', False):
+            values['logo'] = base64.b64encode(logo.read())
+        return values
