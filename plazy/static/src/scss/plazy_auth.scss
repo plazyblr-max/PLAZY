@@ -268,16 +268,6 @@
 .plazy-text-link:hover { color: #fff; }
 .plazy-forgot-password-link { margin-top: 16px; }
 
-.plazy-home { align-items: center; background: #071b10; display: flex; justify-content: center; overflow: hidden; padding: 24px; position: relative; }
-.plazy-home::before { background: url('/plazy/static/src/img/plazy-stadium-login.png') center / cover no-repeat; content: ''; filter: blur(4px) brightness(.52) saturate(.7); inset: -10px; position: absolute; transform: scale(1.025); }
-.plazy-home::after { background: rgba(2, 18, 9, .36); content: ''; inset: 0; position: absolute; }
-.plazy-home-content { color: #fff; max-width: 420px; position: relative; text-align: center; z-index: 1; }
-.plazy-home-content h1 { font-size: 38px; font-weight: 700; margin: 18px 0 8px; }
-.plazy-home-content p { color: rgba(234, 255, 238, .76); font-size: 15px; margin: 0 0 26px; }
-.plazy-home-ball { animation: plazy-ball-float 6s ease-in-out infinite; background: rgba(224, 250, 230, .9); border: 3px solid #216a3d; border-radius: 50%; box-shadow: 0 10px 28px rgba(0, 12, 5, .26); height: 42px; margin: 0 auto; position: relative; width: 42px; }
-.plazy-home-ball::before { background: #216a3d; border-radius: 50%; content: ''; height: 11px; left: 13px; position: absolute; top: 13px; width: 11px; }
-.plazy-home-action { background: #32a85f; border: 1px solid rgba(220, 255, 228, .55); border-radius: 10px; box-shadow: 0 10px 24px rgba(0, 27, 10, .28); color: #fff; display: inline-block; font-size: 14px; font-weight: 750; min-width: 148px; padding: 14px 20px; text-decoration: none; transition: background-color 160ms ease, transform 160ms ease; }
-.plazy-home-action:hover { background: #278c4d; color: #fff; transform: translateY(-1px); }
 
 @media (max-width: 600px) {
     .plazy-auth-page { align-items: flex-start; padding: 16px; }
@@ -287,7 +277,6 @@
     .plazy-registration-panel { max-height: calc(100vh - 32px); margin-top: 0; }
     .plazy-ball-motion { right: 20px; top: 24px; }
     .plazy-auth-panel h1 { font-size: 25px; margin-top: 2px; }
-    .plazy-home-content h1 { font-size: 32px; }
     .plazy-choice-page,
     .plazy-dashboard-page { padding: 16px; }
     .plazy-choice-content,
@@ -300,7 +289,6 @@
 
 @media (prefers-reduced-motion: reduce) {
     .plazy-ball-motion,
-    .plazy-home-ball,
     .plazy-login-panel { animation: none; }
     .plazy-form input:not([type='hidden']),
     .plazy-primary-action { transition: none; }
@@ -484,3 +472,5 @@
     .plazy-live-dot { animation: none; }
     .plazy-feature, .plazy-cta-primary, .plazy-header-register { transition: none; }
 }
+
+// PLAZY Football public brand experience.

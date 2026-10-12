@@ -85,6 +85,12 @@ whenReady(() => {
         form.addEventListener('submit', (event) => {
             const button = event.submitter;
             if (!button) return;
+            // Disabled submitters are omitted from the POST, including "resend".
+            const action = document.createElement('input');
+            action.type = 'hidden';
+            action.name = button.name;
+            action.value = button.value;
+            form.append(action);
             button.disabled = true;
             button.classList.add('is-loading');
             button.dataset.label = button.textContent;

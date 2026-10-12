@@ -3,10 +3,11 @@ import base64
 from urllib.parse import urlencode
 
 from odoo import _, fields, http, tools
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 from odoo.http import request
 from odoo.addons.web.controllers.home import ensure_db
 from odoo.http.session import authenticate
+from odoo.tools.image import image_process
 
 
 class PlazyWebsite(http.Controller):
@@ -82,6 +83,7 @@ class PlazyWebsite(http.Controller):
                     authenticate(request.session, request.env, {
                         'login': pending['email'], 'password': pending['password'], 'type': 'password',
                     })
+                    request.session['plazy_onboarding_complete'] = pending['account_type']
                     return request.redirect('/plazy/dashboard')
             except ValidationError as error:
                 values['error'] = error.args[0]
@@ -311,6 +313,7 @@ class PlazyWebsite(http.Controller):
                 if not current_user._is_public() and current_user.id == existing_user.id:
                     invitation.accept()
                     invitation.mark_joined()
+                    request.session['plazy_onboarding_complete'] = 'invitation'
                     return request.redirect('/plazy/player/dashboard')
                 login_redirect = '/plazy/player/invitation?' + urlencode({'token': token})
                 return request.redirect('/web/login?' + urlencode({'redirect': login_redirect}))
@@ -343,6 +346,7 @@ class PlazyWebsite(http.Controller):
                     'login': user.login, 'password': password, 'type': 'password',
                 })
                 invitation.mark_joined()
+                request.session['plazy_onboarding_complete'] = 'invitation'
                 return request.redirect('/plazy/player/dashboard')
             except ValidationError as error:
                 values['error'] = error.args[0]
@@ -450,6 +454,7 @@ class PlazyWebsite(http.Controller):
             'instagram_url': instagram_value or '',
             'whatsapp_url': whatsapp_value,
             'user_first_name': user_name.split()[0] if user_name else _('Player'),
+            'onboarding_complete': request.session.pop('plazy_onboarding_complete', False),
         }
         if portal_type == 'team':
             values['invitation_message'] = request.session.pop('plazy_team_invitation_message', False)
@@ -483,11 +488,12 @@ class PlazyWebsite(http.Controller):
     @staticmethod
     def _player_values(post):
         return {
-            'name': (post.get('name') or '').strip(),
+            'name': (post.get('name') or post.get('full_name') or '').strip(),
             'full_name': (post.get('full_name') or '').strip(),
             'email': (post.get('email') or '').strip().lower(),
             'mobile': (post.get('mobile') or '').strip(),
             'age': int(post['age']) if (post.get('age') or '').isdigit() else 0,
+            'position': post.get('position') if post.get('position') in ('GK', 'ST', 'Winger', 'LB', 'RB', 'MID') else False,
             'locality': (post.get('locality') or '').strip(),
             'pincode': (post.get('pincode') or '').strip(),
         }
@@ -505,5 +511,19 @@ class PlazyWebsite(http.Controller):
         }
         logo = post.get('logo')
         if logo and getattr(logo, 'filename', False):
-            values['logo'] = base64.b64encode(logo.read())
+            content = logo.read(5 * 1024 * 1024 + 1)
+            if len(content) > 5 * 1024 * 1024:
+                raise ValidationError(_('Choose a team logo smaller than 5 MB.'))
+            if logo.mimetype not in ('image/png', 'image/jpeg', 'image/webp'):
+                raise ValidationError(_('Choose a PNG, JPG or WebP team logo.'))
+            try:
+                processed = image_process(
+                    content, size=(512, 512), verify_resolution=True,
+                )
+            except (UserError, ValueError) as error:
+                raise ValidationError(_('This logo could not be opened. Choose another image.')) from error
+            if not processed:
+                raise ValidationError(_('Choose a valid image for your team logo.'))
+            # Pending registration lives in Odoo's JSON session until OTP verification.
+            values['logo'] = base64.b64encode(processed).decode('ascii')
         return values

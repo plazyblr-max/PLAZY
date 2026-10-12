@@ -13,11 +13,17 @@
         'views/player_team_views.xml',
         'views/plazy_branding_templates.xml',
         'views/plazy_auth_templates.xml',
+        'views/plazy_home_templates.xml',
+        'views/plazy_onboarding_templates.xml',
     ],
     'assets': {
         'web.assets_frontend': [
             'plazy/static/src/js/plazy_auth.js',
             'plazy/static/src/scss/plazy_auth.scss',
+            'plazy/static/src/scss/plazy_home.scss',
+            'plazy/static/src/js/plazy_home.js',
+            'plazy/static/src/scss/plazy_onboarding.scss',
+            'plazy/static/src/js/plazy_onboarding.js',
         ],
     },
     'application': True,

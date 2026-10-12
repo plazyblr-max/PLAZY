@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="public_frontend_layout" inherit_id="web.frontend_layout" primary="True" name="PLAZY Frontend Document">
+        <xpath expr="//div[@id='wrapwrap']/main" position="replace">
+            <div id="plazy-content" tabindex="-1"><t t-out="0"/></div>
+        </xpath>
+    </template>
+    <template id="website_document" inherit_id="plazy.website_layout" name="PLAZY Document Layout">
+        <xpath expr="//t[@t-call='web.frontend_layout']" position="attributes"><attribute name="t-call">plazy.public_frontend_layout</attribute><attribute name="title">title</attribute></xpath>
+    </template>
+    <template id="home_editorial" inherit_id="plazy.home" name="PLAZY Football Editorial Homepage">
+        <xpath expr="//t[@t-call='plazy.website_layout']" position="before">
+            <t t-set="head">
+                <meta name="description" content="Your career changed. Your passion didn't. Meet PLAZY Football, an Indian football community taking shape through player profiles, teams and shared love of the game."/>
+                <t t-set="home_url" t-value="request.env.company.get_base_url().rstrip('/') + '/'"/>
+                <link rel="canonical" t-att-href="home_url"/>
+                <meta property="og:type" content="website"/>
+                <meta property="og:site_name" content="PLAZY Football"/>
+                <meta property="og:title" content="PLAZY Football | More Than a Game. A Place to Belong."/>
+                <meta property="og:description" content="You grew up. Your love for football didn't. Find your place with PLAZY Football."/>
+                <meta property="og:url" t-att-content="home_url"/>
+                <meta property="og:image" t-att-content="home_url + 'plazy/static/src/img/plazy-hero-bengaluru.png'"/>
+                <meta property="og:image:alt" content="A footballer looking towards teammates on a floodlit pitch"/>
+                <meta name="twitter:card" content="summary_large_image"/>
+                <link rel="preload" as="image" href="/plazy/static/src/img/plazy-hero-bengaluru.webp"/>
+            </t>
+        </xpath>
+        <xpath expr="//t[@t-call='plazy.website_layout']" position="attributes"><attribute name="head">head</attribute><attribute name="title">'PLAZY Football | More Than a Game. A Place to Belong.'</attribute></xpath>
+        <xpath expr="//main" position="attributes">
+            <attribute name="id">plazy-main</attribute>
+        </xpath>
+        <xpath expr="//section[contains(@class, 'plazy-home-hero')]" position="inside">
+            <div class="plazy-hero-index" aria-hidden="true">01 / THE LOVE NEVER LEFT</div>
+        </xpath>
+        <xpath expr="//p[hasclass('plazy-home-kicker')][1]" position="replace">
+            <p class="plazy-home-kicker">PLAZY FOOTBALL <span>MORE THAN A GAME. A PLACE TO BELONG.</span></p>
+        </xpath>
+        <xpath expr="//section[contains(@class, 'plazy-home-hero')]//a[contains(@class, 'plazy-home-button')]" position="attributes">
+            <attribute name="t-att-href">'#find-your-people'</attribute>
+        </xpath>
+        <xpath expr="//figure[contains(@class, 'plazy-home-story-image')]/img" position="attributes">
+            <attribute name="src">/plazy/static/src/img/plazy-story-kerala.webp</attribute>
+            <attribute name="width">1774</attribute>
+            <attribute name="height">887</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('plazy-home-story-copy')]/strong" position="before">
+            <ol class="plazy-story-timeline" aria-label="The PLAZY story"><li>The first kick</li><li>A different city</li><li>The next game</li></ol>
+        </xpath>
+        <xpath expr="//div[hasclass('plazy-home-life-grid')]" position="replace">
+            <div class="plazy-home-life-grid">
+                <t t-foreach="[('01', 'Software engineers', 'One last commit. One more game.', 'laptop'), ('02', 'Healthcare workers', 'After looking after everyone, a little time to play.', 'heartbeat'), ('03', 'College students', 'Books down. Boots on. Memories ahead.', 'book'), ('04', 'Designers and creators', 'A different kind of flow, out on the pitch.', 'paint-brush'), ('05', 'Business owners', 'Close up for the day. Open up the game.', 'briefcase'), ('06', 'Everyday football lovers', 'No job title needed. Just a love of football.', 'futbol-o')]" t-as="life">
+                    <article data-plazy-reveal="up"><span t-out="life[0]"/><i t-attf-class="fa fa-#{life[3]}" aria-hidden="true"/><h3 t-out="life[1]"/><p t-out="life[2]"/><small>OFF THE CLOCK. ON THE PITCH.</small></article>
+                </t>
+            </div>
+        </xpath>
+        <xpath expr="//section[@id='experience']" position="attributes"><attribute name="id">find-your-people</attribute></xpath>
+        <xpath expr="//section[@id='find-your-people']//p[hasclass('plazy-home-kicker')]" position="replace"><p class="plazy-home-kicker">FIND YOUR PEOPLE</p></xpath>
+        <xpath expr="//ol[hasclass('plazy-home-path')]" position="replace">
+            <div class="plazy-journey">
+                <p class="plazy-status-label">YOUR FOOTBALL JOURNEY</p>
+                <details open="open"><summary><span>01</span> Discover a game <i class="fa fa-plus" aria-hidden="true"/></summary><p>Finding nearby games is on our roadmap. Today, start by creating your player profile.<br/><span class="plazy-status">Game discovery: planned</span></p></details>
+                <details><summary><span>02</span> Join players <i class="fa fa-plus" aria-hidden="true"/></summary><p>Register your team and invite players by email. Invited players can verify their invitation and join your squad.<br/><a href="/plazy/team/join">Register a team <i class="fa fa-arrow-right" aria-hidden="true"/></a></p></details>
+                <details><summary><span>03</span> Step onto the pitch <i class="fa fa-plus" aria-hidden="true"/></summary><p>Bring your people together. Match schedules and local community discovery are planned; organising the game happens with your teammates.</p></details>
+            </div>
+        </xpath>
+        <xpath expr="//section[@id='find-your-people']//a[contains(@class, 'plazy-home-button')]" position="replace"><a class="plazy-home-button" href="#experience">Explore football <i class="fa fa-arrow-right" aria-hidden="true"/></a></xpath>
+        <xpath expr="//h2[@id='plazy-player-stories-title']" position="replace"><h2 id="plazy-player-stories-title">Every player has a story.</h2></xpath>
+        <xpath expr="//div[hasclass('plazy-home-story-cards')]" position="inside">
+            <article data-plazy-reveal="up"><span>TOGETHER / ILLUSTRATIVE</span><h3>The friends who become a team</h3><p>A shared chat, a team name, a promise to show up for each other.</p></article>
+            <article data-plazy-reveal="up"><span>BELONGING / ILLUSTRATIVE</span><h3>A woman finding her place on the pitch</h3><p>A welcoming game starts with being treated as a teammate, from the very first pass.</p></article>
+            <article data-plazy-reveal="up"><span>JOY / ILLUSTRATIVE</span><h3>Playing simply because it feels good</h3><p>No big ambition. Just fresh air, good company, and one more goal before home.</p></article>
+        </xpath>
+        <xpath expr="//section[@id='community']" position="before">
+            <section id="experience" class="plazy-platform" aria-labelledby="plazy-platform-title">
+                <div class="plazy-home-wrap">
+                    <div class="plazy-home-section-heading"><p class="plazy-home-kicker">THE PLAZY EXPERIENCE</p><h2 id="plazy-platform-title">Your football life.<br/>One place.</h2><p>A place to begin. A squad to build. Choose your next step.</p></div>
+                    <div class="plazy-platform-grid">
+                        <article><i class="fa fa-user-o" aria-hidden="true"/><span class="plazy-status">Available now</span><h3>Your player profile</h3><p>Register as a player and keep your football identity in one place.</p><a t-att-href="'/plazy/player/join' if request.env.user._is_public() else '/plazy/dashboard'">Your place on the pitch <i class="fa fa-arrow-right" aria-hidden="true"/></a></article>
+                        <article><i class="fa fa-users" aria-hidden="true"/><span class="plazy-status">Available now</span><h3>Your team, together</h3><p>Register a team, invite your players, and follow your team's approval progress.</p><a t-att-href="'/plazy/team/join' if request.env.user._is_public() else '/plazy/dashboard'">Build your squad <i class="fa fa-arrow-right" aria-hidden="true"/></a></article>
+                        <article class="plazy-platform-planned"><i class="fa fa-map-marker" aria-hidden="true"/><span class="plazy-status">Planned</span><h3>Your next game</h3><p>Local match discovery, community connections, schedules and events are part of the vision.</p><span class="plazy-planned-note">Still taking shape. Stay close.</span></article>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+        <xpath expr="//section[@id='community']/div/p[hasclass('plazy-home-kicker')]" position="after">
+            <div class="plazy-community-route" aria-label="Our inspiration"><span>KERALA<br/><small>Where the love began</small></span><i class="fa fa-long-arrow-right" aria-hidden="true"/><span>BENGALURU<br/><small>Where the idea took shape</small></span></div>
+        </xpath>
+        <xpath expr="//section[contains(@class, 'plazy-home-final')]//a[hasclass('plazy-home-link')]" position="replace"><a class="plazy-home-link" t-att-href="'/plazy/join' if request.env.user._is_public() else '/plazy/dashboard'">Join the community <i class="fa fa-arrow-right" aria-hidden="true"/></a></xpath>
+    </template>
+
+    <template id="header_editorial" inherit_id="plazy.portal_header" name="PLAZY Responsive Navigation">
+        <xpath expr="//header" position="before"><a class="plazy-skip-link" href="#plazy-main">Skip to content</a></xpath>
+        <xpath expr="//nav[hasclass('plazy-site-nav')]" position="replace">
+            <nav class="plazy-site-nav" aria-label="Main navigation"><a href="/">Home</a><a href="/#story">Our Story</a><a href="/plazy/team/join">Teams</a><a href="/#community">Community</a></nav>
+        </xpath>
+        <xpath expr="//details[hasclass('plazy-mobile-nav')]/nav" position="replace">
+            <nav aria-label="Mobile navigation"><a href="/">Home</a><a href="/#story">Our Story</a><a href="/#find-your-people">Find your people</a><a href="/plazy/team/join">Teams</a><a href="/#community">Community</a><a t-if="request.env.user._is_public()" href="/web/login">Log in</a><a t-else="" href="/plazy/dashboard">My dashboard</a><a href="/plazy/join">Join PLAZY <i class="fa fa-arrow-right" aria-hidden="true"/></a></nav>
+        </xpath>
+    </template>
+</odoo>

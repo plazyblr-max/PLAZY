@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="invitation_login_return" inherit_id="plazy.login" name="Preserve Invitation Login Destination">
+        <xpath expr="//input[@name='redirect']" position="attributes"><attribute name="t-att-value">redirect or '/plazy/login/redirect'</attribute></xpath>
+    </template>
+    <template id="onboarding_shell" name="PLAZY Guided Journey">
+        <div class="pz-journey-shell">
+            <aside class="pz-journey-aside">
+                <p class="pz-eyebrow">YOUR NEXT CHAPTER</p>
+                <h2>Different lives.<br/>One game.</h2>
+                <p>A name. A few teammates.<br/>Something to look forward to.</p>
+                <div class="pz-journey-photo" role="img" aria-label="Football friends together on a local ground"/>
+                <p class="pz-aside-note">MORE THAN A GAME.<br/>A PLACE TO BELONG.</p>
+            </aside>
+            <div class="pz-journey-content"><t t-out="0"/></div>
+        </div>
+    </template>
+
+    <template id="onboarding_progress" name="Journey Progress">
+        <div class="pz-progress-header" hidden="hidden"><span data-progress-label="" aria-live="polite">Step 1</span><span class="pz-progress-caption">A little closer to the pitch</span></div>
+        <progress class="pz-progress" value="1" max="9" aria-label="Registration progress" hidden="hidden"/>
+    </template>
+    <template id="onboarding_controls" name="Journey Navigation">
+        <p class="pz-error" data-onboarding-error="" role="alert" tabindex="-1" hidden="hidden"/>
+        <div class="pz-controls">
+            <button type="button" class="pz-back" data-step-back="" hidden="hidden"><i class="fa fa-arrow-left" aria-hidden="true"/> Back</button>
+            <button type="button" class="pz-next" data-step-next="" hidden="hidden">Continue <i class="fa fa-arrow-right" aria-hidden="true"/></button>
+            <button type="submit" class="pz-next" data-step-submit=""><t t-out="submit_label"/></button>
+        </div>
+    </template>
+    <template id="onboarding_mobile" name="Mobile Number Field">
+        <label for="pz-mobile">Mobile number</label>
+        <div class="pz-phone"><span>+91</span><input id="pz-mobile" name="mobile" type="tel" inputmode="numeric" autocomplete="tel-national" pattern="[6-9][0-9]{9}" maxlength="10" required="required" t-att-value="request.params.get('mobile', '')" placeholder="Your 10-digit number" data-review-label="Mobile"/></div>
+        <p class="pz-hint">An Indian mobile number, without the country code.</p>
+    </template>
+    <template id="onboarding_location" name="Bangalore Location Fields">
+        <label for="pz-locality">Locality</label>
+        <input id="pz-locality" name="locality" type="text" list="pz-localities" autocomplete="address-level3" required="required" placeholder="Search or enter your locality" t-att-value="request.params.get('locality', '')" data-review-label="Locality"/>
+        <datalist id="pz-localities"><option value="Indiranagar"/><option value="Koramangala"/><option value="Whitefield"/><option value="HSR Layout"/><option value="BTM Layout"/><option value="Jayanagar"/><option value="JP Nagar"/><option value="Marathahalli"/><option value="Bellandur"/><option value="Sarjapur Road"/><option value="Electronic City"/><option value="Hebbal"/><option value="Yelahanka"/><option value="Malleshwaram"/><option value="Rajajinagar"/><option value="Banashankari"/><option value="Kengeri"/><option value="KR Puram"/><option value="Banaswadi"/><option value="Hennur"/></datalist>
+        <label for="pz-pincode">PIN code</label><input id="pz-pincode" name="pincode" type="text" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{6}" maxlength="6" required="required" placeholder="6-digit PIN code" t-att-value="request.params.get('pincode', '')" data-review-label="PIN code"/>
+    </template>
+    <template id="onboarding_email" name="Email Field">
+        <label for="pz-email">Email address</label><input id="pz-email" name="email" type="email" required="required" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="you@example.com" t-att-value="request.params.get('email', '')" data-review-label="Email"/>
+        <p class="pz-hint">We'll send a verification code to this address.</p>
+    </template>
+    <template id="onboarding_passwords" name="Account Security Fields">
+        <label for="pz-password">Password</label>
+        <div class="pz-password"><input id="pz-password" name="password" type="password" required="required" minlength="8" autocomplete="new-password" aria-describedby="pz-password-hint"/><button type="button" data-onboarding-toggle="pz-password" aria-label="Show password" title="Show password"><i class="oi" data-icon="visibility" aria-hidden="true"/></button></div>
+        <p id="pz-password-hint" class="pz-hint">At least 8 characters. Make it unique to you.</p>
+        <label for="pz-confirm-password">Confirm password</label>
+        <div class="pz-password"><input id="pz-confirm-password" name="confirm_password" type="password" required="required" minlength="8" autocomplete="new-password"/><button type="button" data-onboarding-toggle="pz-confirm-password" aria-label="Show confirmation password" title="Show confirmation password"><i class="oi" data-icon="visibility" aria-hidden="true"/></button></div>
+    </template>
+    <template id="onboarding_positions" name="Football Position Choices">
+        <fieldset class="pz-choice-field"><legend class="visually-hidden">Preferred position</legend>
+            <div class="pz-position-grid">
+                <t t-foreach="[('GK', 'Goalkeeper', 'Own your area'), ('ST', 'Striker', 'Find the finish'), ('Winger', 'Winger', 'Bring the pace'), ('LB', 'Left back', 'Cover the left'), ('RB', 'Right back', 'Cover the right'), ('MID', 'Midfielder', 'Connect the team')]" t-as="position">
+                    <label class="pz-choice"><input type="radio" name="position" t-att-value="position[0]" t-att-checked="request.params.get('position') == position[0]" required="required" data-review-label="Position"/><span><b t-out="position[0]"/><strong t-out="position[1]"/><small t-out="position[2]"/></span></label>
+                </t>
+            </div>
+        </fieldset>
+    </template>
+    <template id="onboarding_review" name="Registration Review">
+        <section class="pz-step" data-step="review">
+            <p class="pz-eyebrow">LOOKING GOOD</p><h2 tabindex="-1">Ready for your next chapter?</h2><p class="pz-step-copy">A quick look before you make it official.</p>
+            <div class="pz-profile-preview"><div class="pz-logo-preview" data-review-logo=""><i class="fa fa-futbol-o" aria-hidden="true"/></div><div><small>PLAZY FOOTBALL</small><h3 data-review-name="">Your football story</h3><p data-review-subtitle="">A place to belong.</p></div></div>
+            <dl class="pz-review" data-review-details=""/>
+            <p class="pz-hint">Your account will be created after you verify your email.</p>
+        </section>
+    </template>
+
+    <template id="team_guided" inherit_id="plazy.team_join" name="Team Guided Registration">
+        <xpath expr="//main" position="replace">
+            <main class="pz-onboarding" id="plazy-main">
+                <t t-call="plazy.onboarding_shell">
+                    <form class="pz-wizard" data-onboarding="team" method="post" action="/plazy/team/join" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <t t-call="plazy.onboarding_progress"/>
+                        <p t-if="error" class="pz-server-error" role="alert" t-out="error"/>
+                        <section class="pz-step" data-step="welcome"><div class="pz-pitch" aria-hidden="true"><span/><i class="fa fa-futbol-o"/></div><p class="pz-eyebrow">YOUR TEAM STARTS HERE</p><h1 tabindex="-1">Every great team<br/>starts somewhere.</h1><p class="pz-step-copy">Bring your people together. Let's give your team a name, a home, and a place on the pitch.</p><p class="pz-hint">Already part of PLAZY? <a href="/web/login">Log in</a></p></section>
+                        <section class="pz-step" data-step="manager"><p class="pz-eyebrow">THE PERSON BEHIND THE TEAM</p><h2 tabindex="-1">What should we call you?</h2><label for="pz-manager">Manager's name</label><input id="pz-manager" name="manager_name" type="text" autocomplete="name" required="required" maxlength="100" placeholder="Your name" t-att-value="request.params.get('manager_name', '')" data-review-label="Manager"/></section>
+                        <section class="pz-step" data-step="mobile"><p class="pz-eyebrow">KEEP IN TOUCH</p><h2 tabindex="-1">What's your mobile number?</h2><t t-call="plazy.onboarding_mobile"/></section>
+                        <section class="pz-step" data-step="location"><p class="pz-eyebrow">YOUR HOME GROUND</p><h2 tabindex="-1">Where in Bangalore is your team based?</h2><t t-call="plazy.onboarding_location"/></section>
+                        <section class="pz-step" data-step="security"><p class="pz-eyebrow">MAKE IT YOURS</p><h2 tabindex="-1">A secure home for your team.</h2><t t-call="plazy.onboarding_email"/><t t-call="plazy.onboarding_passwords"/></section>
+                        <section class="pz-step" data-step="identity"><p class="pz-eyebrow">SOMETHING TO RALLY BEHIND</p><h2 tabindex="-1">What is your team's name?</h2><label for="pz-team-name">Team name</label><input id="pz-team-name" name="name" type="text" maxlength="80" required="required" placeholder="Give your team a name" t-att-value="request.params.get('name', '')" data-review-label="Team name"/><div class="pz-name-preview"><i class="fa fa-futbol-o" aria-hidden="true"/><span data-team-name-preview="">Your team</span><small>BANGALORE / PLAZY FOOTBALL</small></div></section>
+                        <section class="pz-step" data-step="logo"><p class="pz-eyebrow">WEAR IT WITH PRIDE</p><h2 tabindex="-1">Give your team its mark.</h2><p class="pz-step-copy">A crest, a symbol, a little bit of your story. You can also start without a logo.</p><div class="pz-upload"><div class="pz-logo-preview" data-upload-preview=""><i class="fa fa-futbol-o" aria-hidden="true"/></div><label for="pz-logo">Upload your team logo</label><input id="pz-logo" name="logo" type="file" accept="image/png,image/jpeg,image/webp"/><p class="pz-hint">PNG, JPG or WebP. Up to 5 MB.</p><button type="button" class="pz-text-button" data-remove-logo="" hidden="hidden">Remove logo</button></div><button class="pz-ai-option" type="button" disabled="disabled"><i class="fa fa-compass" aria-hidden="true"/> Generate logo with AI <span>Coming soon</span></button></section>
+                        <section class="pz-step" data-step="type"><p class="pz-eyebrow">FIND YOUR FORMAT</p><h2 tabindex="-1">What kind of football does your team play?</h2><fieldset class="pz-choice-field"><legend class="visually-hidden">Team type</legend><div class="pz-team-types"><label class="pz-choice"><input type="radio" name="team_type" value="five_a_side" required="required" t-att-checked="request.params.get('team_type') == 'five_a_side'" data-review-label="Team type"/><span><i class="fa fa-futbol-o" aria-hidden="true"/><strong>5-a-side Football</strong><small>Quick passes. Close connections.</small><small>6 joined players for approval</small></span></label><label class="pz-choice"><input type="radio" name="team_type" value="seven_a_side" required="required" t-att-checked="request.params.get('team_type') == 'seven_a_side'" data-review-label="Team type"/><span><i class="fa fa-users" aria-hidden="true"/><strong>7-a-side Football</strong><small>More space. More possibilities.</small><small>8 joined players for approval</small></span></label></div></fieldset></section>
+                        <t t-call="plazy.onboarding_review"/>
+                        <t t-call="plazy.onboarding_controls" submit_label="'Create My Team'"/>
+                    </form>
+                </t>
+            </main>
+        </xpath>
+    </template>
+    <template id="player_guided" inherit_id="plazy.player_join" name="Player Guided Registration">
+        <xpath expr="//main" position="replace">
+            <main class="pz-onboarding" id="plazy-main">
+                <t t-call="plazy.onboarding_shell">
+                    <form class="pz-wizard" data-onboarding="player" method="post" action="/plazy/player/join">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="name" t-att-value="request.params.get('name', '')" data-player-name=""/>
+                        <t t-call="plazy.onboarding_progress"/><p t-if="error" class="pz-server-error" role="alert" t-out="error"/>
+                        <section class="pz-step" data-step="welcome"><div class="pz-pitch" aria-hidden="true"><span/><i class="fa fa-futbol-o"/></div><p class="pz-eyebrow">THERE'S ROOM FOR YOU</p><h1 tabindex="-1">Let's get you<br/>on the pitch!</h1><p class="pz-step-copy">First game or first game in years. Your football story starts with you.</p><p class="pz-hint">Already part of PLAZY? <a href="/web/login">Log in</a></p></section>
+                        <section class="pz-step" data-step="name"><p class="pz-eyebrow">NICE TO MEET YOU</p><h2 tabindex="-1">What should we call you?</h2><label for="pz-player-name">Your full name</label><input id="pz-player-name" name="full_name" type="text" required="required" autocomplete="name" maxlength="100" t-att-value="request.params.get('full_name', '')" placeholder="Your name" data-review-label="Player"/></section>
+                        <section class="pz-step" data-step="position"><p class="pz-eyebrow">YOUR PART OF THE PITCH</p><h2 tabindex="-1">Where do you love to play?</h2><p class="pz-step-copy">Choose the position that feels most like you.</p><t t-call="plazy.onboarding_positions"/></section>
+                        <section class="pz-step" data-step="email"><p class="pz-eyebrow">YOUR CONNECTION TO PLAZY</p><h2 tabindex="-1">What's your email address?</h2><t t-call="plazy.onboarding_email"/></section>
+                        <section class="pz-step" data-step="mobile"><p class="pz-eyebrow">KEEP IN TOUCH</p><h2 tabindex="-1">What's your mobile number?</h2><t t-call="plazy.onboarding_mobile"/></section>
+                        <section class="pz-step" data-step="age"><p class="pz-eyebrow">A LITTLE ABOUT YOU</p><h2 tabindex="-1">How old are you?</h2><label for="pz-age">Age</label><input id="pz-age" name="age" type="number" min="13" max="100" required="required" t-att-value="request.params.get('age', '')" placeholder="Your age" data-review-label="Age"/><p class="pz-hint">Player registration is for ages 13 and above.</p></section>
+                        <section class="pz-step" data-step="location"><p class="pz-eyebrow">YOUR HOME GROUND</p><h2 tabindex="-1">Where in Bangalore are you based?</h2><t t-call="plazy.onboarding_location"/></section>
+                        <section class="pz-step" data-step="security"><p class="pz-eyebrow">MAKE IT YOURS</p><h2 tabindex="-1">Keep your account secure.</h2><t t-call="plazy.onboarding_passwords"/></section>
+                        <t t-call="plazy.onboarding_review"/><t t-call="plazy.onboarding_controls" submit_label="'Create My Player Profile'"/>
+                    </form>
+                </t>
+            </main>
+        </xpath>
+    </template>
+
+    <template id="invite_player_guided" inherit_id="plazy.team_dashboard" name="Guided Player Invitation">
+        <xpath expr="//section[hasclass('plazy-team-invitations')][form]" position="replace">
+            <section class="pz-invite-section" id="invite-player" t-if="team.registration_status not in ('waiting', 'approved')">
+                <form class="pz-wizard" data-onboarding="invite" method="post" action="/plazy/team/players/invite">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <t t-call="plazy.onboarding_progress"/>
+                    <section class="pz-step" data-step="welcome"><p class="pz-eyebrow">FROM FRIENDS TO TEAMMATES</p><h2 tabindex="-1">Your squad starts with one player.</h2><p class="pz-step-copy">Invite a player to <strong t-out="team.name"/>. They'll receive a personal link to join your team.</p></section>
+                    <section class="pz-step" data-step="name"><p class="pz-eyebrow">YOUR NEXT TEAMMATE</p><h2 tabindex="-1">Who are we inviting?</h2><label for="pz-invite-name">Player's name</label><input id="pz-invite-name" name="player_name" type="text" required="required" maxlength="100" placeholder="Player's name" data-review-label="Player"/></section>
+                    <section class="pz-step" data-step="position"><p class="pz-eyebrow">A PLACE IN YOUR SQUAD</p><h2 tabindex="-1">Where do they play?</h2><t t-call="plazy.onboarding_positions"/></section>
+                    <section class="pz-step" data-step="email"><p class="pz-eyebrow">SEND THEIR INVITATION</p><h2 tabindex="-1">What's their email address?</h2><label for="pz-invite-email">Player's email</label><input id="pz-invite-email" type="email" name="email" required="required" placeholder="player@example.com" data-review-label="Email"/><p class="pz-hint">New and existing PLAZY players can join through an invitation.</p></section>
+                    <section class="pz-step" data-step="mobile"><p class="pz-eyebrow">KEEP IN TOUCH</p><h2 tabindex="-1">What's their mobile number?</h2><t t-call="plazy.onboarding_mobile"/></section>
+                    <section class="pz-step" data-step="review"><p class="pz-eyebrow">ONE MORE PLAYER</p><h2 tabindex="-1">Ready to send the invitation?</h2><dl class="pz-review" data-review-details=""/><p class="pz-hint">They'll join your squad once they accept. You can track their progress below.</p></section>
+                    <t t-call="plazy.onboarding_controls" submit_label="'Send Player Invitation'"/>
+                </form>
+            </section>
+        </xpath>
+    </template>
+
+    <template id="accept_invitation_guided" inherit_id="plazy.player_invitation_onboarding" name="Guided Invitation Acceptance">
+        <xpath expr="//main" position="replace">
+            <main class="pz-onboarding" id="plazy-main"><t t-call="plazy.onboarding_shell">
+                <form class="pz-wizard" data-onboarding="accept" method="post" action="/plazy/player/invitation">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/><input type="hidden" name="token" t-att-value="token"/><input type="hidden" name="action" value="continue"/>
+                    <t t-call="plazy.onboarding_progress"/>
+                    <section class="pz-step" data-step="welcome"><div class="pz-pitch" aria-hidden="true"><span/><i class="fa fa-futbol-o"/></div><p class="pz-eyebrow">YOU'VE GOT A PLACE ON THE TEAM</p><h1 tabindex="-1">Let's get you<br/>on the pitch!</h1><p class="pz-step-copy"><strong t-out="invitation.team_id.name"/> has invited you to join the squad.</p></section>
+                    <section class="pz-step" data-step="review"><p class="pz-eyebrow">YOUR INVITATION</p><h2 tabindex="-1">A team is waiting for you.</h2><dl class="pz-review pz-invitation-details"><div><dt>Player</dt><dd t-out="invitation.player_name"/></div><div><dt>Team</dt><dd t-out="invitation.team_id.name"/></div><div t-if="invitation.position"><dt>Position</dt><dd t-out="invitation.position"/></div><div><dt>Email</dt><dd t-out="invitation.email"/></div><div><dt>Mobile</dt><dd t-out="invitation.mobile"/></div></dl><p class="pz-hint">These details were provided by your manager. Contact them if something needs changing.</p></section>
+                    <t t-call="plazy.onboarding_controls" submit_label="'Log in and accept invitation' if existing_player and not signed_in_as_invitee else ('Accept invitation' if existing_player else 'Continue to account security')"/>
+                </form>
+            </t></main>
+        </xpath>
+    </template>
+    <template id="invitation_security_guided" inherit_id="plazy.player_invitation_password" name="Invited Player Account Security">
+        <xpath expr="//main" position="replace">
+            <main class="pz-onboarding" id="plazy-main"><t t-call="plazy.onboarding_shell">
+                <form class="pz-wizard" data-onboarding="password" method="post" action="/plazy/player/invitation/set-password">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/><input type="hidden" name="token" t-att-value="token"/><t t-call="plazy.onboarding_progress"/><p t-if="error" class="pz-server-error" role="alert" t-out="error"/>
+                    <section class="pz-step" data-step="security"><p class="pz-eyebrow">JOINING <t t-out="invitation.team_id.name"/></p><h1 tabindex="-1">One last step.<br/>Make it yours.</h1><p class="pz-step-copy">Create a password for <strong t-out="invitation.email"/>.</p><t t-call="plazy.onboarding_passwords"/></section>
+                    <t t-call="plazy.onboarding_controls" submit_label="'Join My Team'"/>
+                </form>
+            </t></main>
+        </xpath>
+    </template>
+    <template id="verification_guided_style" inherit_id="plazy.otp_verify" name="Registration Verification Style">
+        <xpath expr="//main" position="attributes"><attribute name="class">plazy-auth-page pz-verification-page</attribute></xpath>
+        <xpath expr="//h1" position="replace"><h1 id="plazy-otp-title">One code.<br/>Then you're in.</h1></xpath>
+        <xpath expr="//button[@value='resend']" position="attributes"><attribute name="formnovalidate">formnovalidate</attribute></xpath>
+    </template>
+    <template id="onboarding_success" name="Confirmed Onboarding Welcome">
+        <section t-if="onboarding_complete" class="pz-success" role="status">
+            <span class="pz-success-mark" aria-hidden="true"><i class="fa fa-futbol-o"/></span>
+            <div><p class="pz-eyebrow">WELCOME TO PLAZY</p><h2><t t-if="onboarding_complete == 'team'">Your team has a home.</t><t t-else="">You're part of the game.</t></h2><p><t t-if="onboarding_complete == 'team'">Your account is verified. Now bring your players together.</t><t t-elif="onboarding_complete == 'invitation'">Invitation accepted. Welcome to your team.</t><t t-else="">Your email is verified and your player profile is ready.</t></p><a t-if="onboarding_complete == 'team'" class="pz-next" href="#invite-player">Add your first player <i class="fa fa-arrow-right" aria-hidden="true"/></a></div>
+        </section>
+    </template>
+    <template id="team_welcome" inherit_id="plazy.team_dashboard" name="New Team Welcome">
+        <xpath expr="//div[hasclass('plazy-portal-intro')]" position="before"><t t-call="plazy.onboarding_success" onboarding_complete="onboarding_complete"/></xpath>
+    </template>
+    <template id="player_welcome" inherit_id="plazy.player_dashboard" name="New Player Welcome">
+        <xpath expr="//div[hasclass('plazy-portal-intro')]" position="before"><t t-call="plazy.onboarding_success" onboarding_complete="onboarding_complete"/></xpath>
+        <xpath expr="//dl" position="inside"><div t-if="player.position"><dt>Position</dt><dd t-out="dict(player._fields['position'].selection).get(player.position)"/></div></xpath>
+    </template>
+</odoo>

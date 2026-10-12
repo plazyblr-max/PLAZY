@@ -16,14 +16,14 @@
             <attribute name="content">Plazy Football</attribute>
         </xpath>
         <xpath expr="//meta[@property='og:description']" position="attributes">
-            <attribute name="content">Find players, join teams, play football, and build your Bengaluru football community.</attribute>
+            <attribute name="content">PLAZY Football helps players and teams in Bengaluru keep their love for football alive. More than a game, a place to belong.</attribute>
         </xpath>
         <xpath expr="//meta[@property='og:image:alt']" position="attributes">
             <attribute name="content">Plazy Football community</attribute>
         </xpath>
         <xpath expr="//meta[@name='twitter:site']" position="replace"/>
         <xpath expr="//meta[@name='twitter:description']" position="attributes">
-            <attribute name="content">Find players, join teams, play football, and build your Bengaluru football community.</attribute>
+            <attribute name="content">PLAZY Football helps players and teams in Bengaluru keep their love for football alive. More than a game, a place to belong.</attribute>
         </xpath>
         <xpath expr="//meta[@name='twitter:image:alt']" position="attributes">
             <attribute name="content">Plazy Football community</attribute>

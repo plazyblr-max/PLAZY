@@ -10,6 +10,10 @@ class PlazyPlayer(models.Model):
     full_name = fields.Char(string='Full Name', required=True)
     email = fields.Char(string='Email', required=True, index=True)
     mobile = fields.Char(string='Mobile Number', required=True)
+    position = fields.Selection([
+        ('GK', 'Goalkeeper'), ('ST', 'Striker'), ('Winger', 'Winger'),
+        ('LB', 'Left back'), ('RB', 'Right back'), ('MID', 'Midfielder'),
+    ], string='Preferred Position')
     # Team managers only collect the essentials for an invitation. Players can
     # complete these profile details later through the normal player profile flow.
     age = fields.Integer(string='Age')
