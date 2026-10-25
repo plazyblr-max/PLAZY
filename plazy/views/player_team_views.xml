@@ -46,7 +46,7 @@
     </record>
     <menuitem id="menu_plazy_admin_home" name="Admin Home"
               parent="menu_plazy_root" action="action_plazy_admin_home"
-              sequence="10" groups="base.group_system"/>
+              sequence="10" groups="base.group_system,plazy.competition_admin"/>
     <menuitem id="menu_plazy_player" name="Players" parent="menu_plazy_root"
               action="action_plazy_player" sequence="1"
               groups="base.group_user"/>
@@ -93,8 +93,8 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button name="action_approve" type="object" string="Approve" class="btn-primary" invisible="registration_status != 'waiting'" groups="base.group_system"/>
-                    <button name="action_reject" type="object" string="Reject" invisible="registration_status != 'waiting'" groups="base.group_system"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary" invisible="registration_status != 'waiting'" groups="base.group_system,plazy.competition_admin"/>
+                    <button name="action_reject" type="object" string="Reject" invisible="registration_status != 'waiting'" groups="base.group_system,plazy.competition_admin"/>
                 </footer>
             </form>
         </field>

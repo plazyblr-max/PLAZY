@@ -191,6 +191,18 @@ class PlazyOnboarding {
                     this.fail(data.result?.message || 'We could not check this email. Please try again.');
                     return false;
                 }
+                const mobile = this.form.elements.namedItem('mobile');
+                if (mobile) {
+                    mobile.required = !data.result.player;
+                    mobile.disabled = Boolean(data.result.player);
+                    if (data.result.player) mobile.value = '';
+                }
+                this.steps = [...this.form.querySelectorAll('[data-step]')].filter(section => !(data.result.player && section.dataset.step === 'mobile'));
+                if (data.result.player) {
+                    this.form.elements.namedItem('player_name').value = data.result.player.name;
+                    const position = this.form.querySelector(`input[name="position"][value="${CSS.escape(data.result.player.position)}"]`);
+                    if (position) position.checked = true;
+                }
             } catch {
                 this.fail('We could not check this email. Check your connection and try again.');
                 return false;

@@ -1,0 +1,10 @@
+<odoo>
+<record id="access_tournament_admin" model="ir.access"><field name="name">plazy.tournament.admin</field><field name="model_id" ref="model_plazy_tournament"/><field name="group_id" ref="base.group_system"/><field name="operation">crud</field></record>
+<record id="access_tournament_registration_admin" model="ir.access"><field name="name">plazy.tournament.registration.admin</field><field name="model_id" ref="model_plazy_tournament_registration"/><field name="group_id" ref="base.group_system"/><field name="operation">crud</field></record>
+<record id="access_tournament_group_admin" model="ir.access"><field name="name">plazy.tournament.group.admin</field><field name="model_id" ref="model_plazy_tournament_group"/><field name="group_id" ref="base.group_system"/><field name="operation">crud</field></record>
+<record id="access_tournament_venue_admin" model="ir.access"><field name="name">plazy.tournament.venue.admin</field><field name="model_id" ref="model_plazy_tournament_venue"/><field name="group_id" ref="base.group_system"/><field name="operation">crud</field></record>
+<record id="access_tournament_slot_admin" model="ir.access"><field name="name">plazy.tournament.slot.admin</field><field name="model_id" ref="model_plazy_tournament_slot"/><field name="group_id" ref="base.group_system"/><field name="operation">crud</field></record>
+<record id="access_tournament_match_admin" model="ir.access"><field name="name">plazy.tournament.match.admin</field><field name="model_id" ref="model_plazy_tournament_match"/><field name="group_id" ref="base.group_system"/><field name="operation">crud</field></record>
+<record id="access_match_result_audit_admin" model="ir.access"><field name="name">plazy.match.result.audit.admin</field><field name="model_id" ref="model_plazy_match_result_audit"/><field name="group_id" ref="base.group_system"/><field name="operation">cr</field></record>
+</odoo>
+

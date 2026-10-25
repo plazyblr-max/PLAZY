@@ -1,0 +1,9 @@
+<odoo>
+<record id="access_tournament_admin" model="ir.access"><field name="domain">[('company_id', 'in', company_ids)]</field></record>
+<record id="access_tournament_registration_admin" model="ir.access"><field name="domain">[('tournament_id.company_id', 'in', company_ids)]</field></record>
+<record id="access_tournament_group_admin" model="ir.access"><field name="domain">[('tournament_id.company_id', 'in', company_ids)]</field></record>
+<record id="access_tournament_match_admin" model="ir.access"><field name="domain">[('tournament_id.company_id', 'in', company_ids)]</field></record>
+<record id="access_match_result_audit_admin" model="ir.access"><field name="domain">[('match_id.tournament_id.company_id', 'in', company_ids)]</field></record>
+<record id="access_plazy_team_user" model="ir.access"><field name="domain">[('company_id', 'in', company_ids)]</field></record>
+<record id="access_plazy_player_user" model="ir.access"><field name="domain">[('company_id', 'in', company_ids)]</field></record>
+</odoo>

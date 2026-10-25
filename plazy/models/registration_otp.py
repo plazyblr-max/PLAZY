@@ -26,6 +26,8 @@ class PlazyRegistrationOtp(models.Model):
     attempts = fields.Integer(default=0, copy=False)
     is_verified = fields.Boolean(default=False, copy=False)
 
+
+
     @classmethod
     def _sender_address(cls, env):
         """Use the administrator address for public registration messages."""

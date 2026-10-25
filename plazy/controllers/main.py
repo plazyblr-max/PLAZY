@@ -3,11 +3,14 @@ import base64
 from urllib.parse import urlencode
 
 from odoo import _, fields, http, tools
+from odoo.tools.sql import escape_like_value
 from odoo.exceptions import UserError, ValidationError
 from odoo.http import request
 from odoo.addons.web.controllers.home import ensure_db
 from odoo.http.session import authenticate
 from odoo.tools.image import image_process
+from ..models.competition import is_competition_admin
+from .lookup import allow_player_lookup
 
 
 class PlazyWebsite(http.Controller):
@@ -100,7 +103,7 @@ class PlazyWebsite(http.Controller):
                 if not tools.single_email_re.match(email):
                     raise ValidationError(_('Enter a valid registered email address.'))
                 user = request.env['res.users'].sudo().search([
-                    ('login', '=ilike', email), ('active', '=', True),
+                    ('login', '=ilike', escape_like_value(email)), ('active', '=', True),
                 ], limit=1)
                 if not user:
                     raise ValidationError(_('No active account is registered with this email address.'))
@@ -184,7 +187,7 @@ class PlazyWebsite(http.Controller):
 
     @http.route('/plazy/dashboard', type='http', auth='user', website=True, sitemap=False)
     def dashboard(self):
-        if request.env.user.has_group('base.group_system'):
+        if is_competition_admin(request.env):
             return request.redirect('/plazy/admin/choose')
         if request.env.user._is_internal():
             return request.redirect('/odoo')
@@ -201,29 +204,15 @@ class PlazyWebsite(http.Controller):
 
     @http.route('/plazy/admin/choose', type='http', auth='user', website=True, sitemap=False)
     def admin_destination(self):
-        if not request.env.user.has_group('base.group_system'):
+        if not is_competition_admin(request.env):
             return request.not_found()
         return request.render('plazy.admin_destination', self._portal_values(request.env.user, 'admin'))
 
     @http.route('/plazy/admin/dashboard', type='http', auth='user', website=True, sitemap=False)
     def admin_dashboard(self):
-        if not request.env.user.has_group('base.group_system'):
+        if not is_competition_admin(request.env):
             return request.not_found()
-        values = self._portal_values(request.env.user, 'admin')
-        player_group = request.env.ref('plazy.player')
-        team_group = request.env.ref('plazy.team')
-        users = request.env['res.users'].sudo()
-        values.update({
-            'player_count': request.env['plazy.player'].sudo().search_count([]),
-            'team_count': request.env['plazy.team'].sudo().search_count([]),
-            'registered_user_count': users.search_count([
-                '|', ('group_ids', 'in', player_group.ids), ('group_ids', 'in', team_group.ids),
-            ]),
-            'pending_approval_teams': request.env['plazy.team'].sudo().search([
-                ('registration_status', '=', 'waiting'),
-            ]),
-        })
-        return request.render('plazy.admin_dashboard', values)
+        return request.redirect('/plazy/admin/portal')
 
     @http.route('/plazy/player/dashboard', type='http', auth='user', website=True, sitemap=False)
     def player_dashboard(self):
@@ -254,6 +243,8 @@ class PlazyWebsite(http.Controller):
         team = self._current_team()
         if not team:
             return {'valid': False, 'message': _('Only a team manager can invite players.')}
+        if not allow_player_lookup(request.session):
+            return {'valid': False, 'message': _('Please wait a minute before checking more players.')}
         return request.env['plazy.team.player.invitation'].validate_email_for_team(request.env, team, email)
 
     @http.route('/plazy/team/players/invite', type='http', auth='user', website=True, sitemap=False, methods=['POST'])
@@ -262,11 +253,11 @@ class PlazyWebsite(http.Controller):
         if not team:
             return request.not_found()
         try:
-            if team.player_invitation_count >= 10:
-                raise ValidationError(_('A team can invite a maximum of 10 players.'))
+            team._check_roster_space()
             player_name = (post.get('player_name') or '').strip()
             mobile = (post.get('mobile') or '').strip()
-            if not player_name or not mobile:
+            existing = request.env['plazy.player'].sudo().search([('email_normalized', '=', (post.get('email') or '').strip().lower()), ('company_id', '=', team.company_id.id), ('user_id', '!=', False)], limit=1)
+            if not existing and (not player_name or not mobile):
                 raise ValidationError(_('Player name and mobile number are required.'))
             request.env['plazy.team.player.invitation'].create_and_send(request.env, team, post)
             request.session['plazy_team_invitation_message'] = _('Invitation sent to %(email)s.') % {
@@ -305,20 +296,28 @@ class PlazyWebsite(http.Controller):
         if not invitation or not invitation.is_usable():
             return request.render('plazy.player_invitation_invalid')
         existing_user = invitation.existing_user_id.exists() or request.env['res.users'].sudo().search([
-            ('login', '=ilike', invitation.email),
+            ('login', '=ilike', escape_like_value(invitation.email)),
         ], limit=1)
         current_user = request.env.user
+        error = False
         if request.httprequest.method == 'POST' and post.get('action') == 'continue':
             if existing_user:
                 if not current_user._is_public() and current_user.id == existing_user.id:
-                    invitation.accept()
-                    invitation.mark_joined()
-                    request.session['plazy_onboarding_complete'] = 'invitation'
-                    return request.redirect('/plazy/player/dashboard')
-                login_redirect = '/plazy/player/invitation?' + urlencode({'token': token})
-                return request.redirect('/web/login?' + urlencode({'redirect': login_redirect}))
-            return request.redirect('/plazy/player/invitation/set-password?' + urlencode({'token': token}))
+                    try:
+                        with request.env.cr.savepoint():
+                            invitation.accept()
+                            invitation.mark_joined()
+                        request.session['plazy_onboarding_complete'] = 'invitation'
+                        return request.redirect('/plazy/player/dashboard')
+                    except ValidationError as exception:
+                        error = exception.args[0]
+                else:
+                    login_redirect = '/plazy/player/invitation?' + urlencode({'token': token})
+                    return request.redirect('/web/login?' + urlencode({'redirect': login_redirect}))
+            else:
+                return request.redirect('/plazy/player/invitation/set-password?' + urlencode({'token': token}))
         return request.render('plazy.player_invitation_onboarding', {
+            'error': error,
             'invitation': invitation,
             'existing_player': bool(existing_user),
             'signed_in_as_invitee': not current_user._is_public() and current_user.id == existing_user.id,
@@ -332,7 +331,7 @@ class PlazyWebsite(http.Controller):
         if not invitation or not invitation.is_usable():
             return request.render('plazy.player_invitation_invalid')
         existing_user = invitation.existing_user_id.exists() or request.env['res.users'].sudo().search([
-            ('login', '=ilike', invitation.email),
+            ('login', '=ilike', escape_like_value(invitation.email)),
         ], limit=1)
         if existing_user:
             return request.redirect('/plazy/player/invitation?' + urlencode({'token': token}))
@@ -366,7 +365,7 @@ class PlazyWebsite(http.Controller):
 
     @http.route('/plazy/admin/team/<int:team_id>/approve', type='http', auth='user', website=True, sitemap=False, methods=['POST'])
     def approve_team(self, team_id, **_post):
-        if not request.env.user.has_group('base.group_system'):
+        if not is_competition_admin(request.env):
             return request.not_found()
         team = request.env['plazy.team'].sudo().browse(team_id).exists()
         if team:
@@ -375,7 +374,7 @@ class PlazyWebsite(http.Controller):
 
     @http.route('/plazy/admin/team/<int:team_id>/reject', type='http', auth='user', website=True, sitemap=False, methods=['POST'])
     def reject_team(self, team_id, reason=None, **_post):
-        if not request.env.user.has_group('base.group_system'):
+        if not is_competition_admin(request.env):
             return request.not_found()
         team = request.env['plazy.team'].sudo().browse(team_id).exists()
         if team:
@@ -397,7 +396,7 @@ class PlazyWebsite(http.Controller):
     @staticmethod
     def _create_portal_user(name, email, password, group_xmlid):
         users = request.env['res.users'].sudo()
-        if users.search_count([('login', '=ilike', email)]):
+        if users.search_count([('login', '=ilike', escape_like_value(email))]):
             raise ValidationError(_('An account already exists for this email address.'))
         group = request.env.ref(group_xmlid).sudo()
         company = request.env.company
@@ -416,7 +415,7 @@ class PlazyWebsite(http.Controller):
         email = values.get('email') or ''
         if not tools.single_email_re.match(email):
             raise ValidationError(_('Enter a valid email address before requesting a verification code.'))
-        if request.env['res.users'].sudo().search_count([('login', '=ilike', email)]):
+        if request.env['res.users'].sudo().search_count([('login', '=ilike', escape_like_value(email))]):
             raise ValidationError(_('An account already exists for this email address.'))
         return {
             'account_type': account_type,
@@ -465,7 +464,7 @@ class PlazyWebsite(http.Controller):
     def _current_team():
         if not request.env.user.has_group('plazy.team'):
             return False
-        return request.env['plazy.team'].sudo().search([('user_id', '=', request.env.user.id)], limit=1)
+        return request.env['plazy.team'].sudo().search([('user_id', '=', request.env.user.id), ('company_id', '=', request.env.company.id)], limit=1)
 
     @staticmethod
     def _team_invitation_for_current_team(invitation_id):

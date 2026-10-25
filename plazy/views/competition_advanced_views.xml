@@ -1,0 +1,15 @@
+<odoo>
+    <record id="view_tournament_advanced" model="ir.ui.view">
+        <field name="name">plazy.tournament.advanced</field><field name="model">plazy.tournament</field><field name="inherit_id" ref="plazy.view_tournament_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tie_breaker']" position="after"><field name="third_place"/></xpath>
+            <xpath expr="//field[@name='max_matches_day']" position="after"><field name="timezone"/><field name="kickoff_interval"/><field name="knockout_buffer"/></xpath>
+            <xpath expr="//notebook" position="inside"><page string="Event History"><field name="event_ids" readonly="1"><list><field name="create_date"/><field name="create_uid"/><field name="action"/><field name="details"/></list></field></page></xpath>
+        </field>
+    </record>
+    <record id="view_registration_advanced" model="ir.ui.view"><field name="name">plazy.registration.advanced</field><field name="model">plazy.tournament.registration</field><field name="inherit_id" ref="plazy.view_competition_registration_form"/><field name="arch" type="xml"><xpath expr="//field[@name='group_id']" position="after"><field name="seed"/><field name="tie_order"/></xpath></field></record>
+    <record id="view_group_advanced" model="ir.ui.view"><field name="name">plazy.group.advanced</field><field name="model">plazy.tournament.group</field><field name="arch" type="xml"><form><header><button name="action_resolve_tie" type="object" string="Record Tie Decision" class="btn-primary"/></header><sheet><group><field name="name"/><field name="tournament_id"/><field name="decision_order"/><field name="decision_reason"/></group><field name="registration_ids" readonly="1"><list><field name="team_reference"/><field name="team_id"/><field name="tie_order"/></list></field></sheet></form></field></record>
+    <record id="action_competition_groups" model="ir.actions.act_window"><field name="name">Groups and Tie Decisions</field><field name="res_model">plazy.tournament.group</field><field name="view_mode">list,form</field></record>
+    <menuitem id="menu_competition_groups" name="Groups and Tie Decisions" parent="menu_plazy_root" action="action_competition_groups" groups="base.group_system,plazy.competition_admin" sequence="34"/>
+    <record id="view_match_advanced" model="ir.ui.view"><field name="name">plazy.match.advanced</field><field name="model">plazy.tournament.match</field><field name="inherit_id" ref="plazy.view_competition_match_form"/><field name="arch" type="xml"><xpath expr="//field[@name='round_number']" position="after"><field name="round_label"/><field name="is_bye"/><field name="is_third_place"/></xpath><xpath expr="//field[@name='duration']" position="after"><field name="reserved_minutes" readonly="1"/></xpath><xpath expr="//field[@name='next_slot']" position="after"><field name="loser_match_id" readonly="1"/><field name="loser_slot" readonly="1"/></xpath></field></record>
+</odoo>

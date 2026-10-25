@@ -1,7 +1,7 @@
 import re
 
 from odoo import api, fields, models, tools, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, ValidationError
 
 
 class PlazyTeam(models.Model):
@@ -9,6 +9,7 @@ class PlazyTeam(models.Model):
     _description = 'Plazy Team'
 
     name = fields.Char(string='Team Name', required=True)
+    company_id = fields.Many2one('res.company', required=True, default=lambda s: s.env.company, index=True)
     manager_name = fields.Char(string='Manager Name')
     email = fields.Char(string='Email', required=True, index=True)
     mobile = fields.Char(string='Mobile Number', required=True)
@@ -45,15 +46,16 @@ class PlazyTeam(models.Model):
     player_invitation_count = fields.Integer(compute='_compute_player_progress',
                                              string='Invitations Sent')
     can_request_approval = fields.Boolean(compute='_compute_player_progress')
+    maximum_player_count = fields.Integer(compute='_compute_player_progress')
 
-    @api.depends('team_type', 'invitation_ids.status')
+    @api.depends('team_type', 'invitation_ids.status', 'player_ids.user_id', 'registration_status')
     def _compute_player_progress(self):
         for team in self:
-            team.required_player_count = 8 if team.team_type == 'seven_a_side' else 6
-            team.joined_player_count = len(team.invitation_ids.filtered(
-                lambda invite: invite.status == 'joined'))
-            team.player_invitation_count = len(team.invitation_ids.filtered(
-                lambda invite: invite.status not in ('cancelled', 'failed')))
+            team.required_player_count = 8 if team.team_type == 'seven_a_side' else team.company_id.plazy_five_min
+            team.maximum_player_count = 10 if team.team_type == 'seven_a_side' else team.company_id.plazy_five_max
+            team.joined_player_count = len(team.player_ids.filtered('user_id'))
+            team.player_invitation_count = len(team.player_ids) + len(team.invitation_ids.filtered(
+                lambda invite: invite.status == 'sent' and invite.expires_at > fields.Datetime.now()))
             team.can_request_approval = (
                     team.joined_player_count >= team.required_player_count
                     and team.registration_status not in ('waiting', 'approved')
@@ -73,7 +75,7 @@ class PlazyTeam(models.Model):
 
     def _refresh_registration_status(self):
         for team in self:
-            if team.registration_status in ('waiting', 'approved'):
+            if team.registration_status in ('waiting', 'approved', 'rejected'):
                 continue
             team.registration_status = 'eligible' if team.joined_player_count >= team.required_player_count else 'inviting'
 
@@ -92,7 +94,11 @@ class PlazyTeam(models.Model):
         return True
 
     def action_approve(self):
+        if not self.env.su and not (self.env.user.has_group('base.group_system') or self.env.user.has_group('plazy.competition_admin')):
+            raise AccessError(_('Only administrators can approve teams.'))
         for team in self:
+            if team.registration_status != 'waiting' or team.joined_player_count < team.required_player_count:
+                raise ValidationError(_('The team must be pending approval with an eligible roster.'))
             team.write({'registration_status': 'approved',
                         'approved_at': fields.Datetime.now(),
                         'rejection_reason': False})
@@ -100,6 +106,8 @@ class PlazyTeam(models.Model):
         return True
 
     def action_reject(self):
+        if not self.env.su and not (self.env.user.has_group('base.group_system') or self.env.user.has_group('plazy.competition_admin')):
+            raise AccessError(_('Only administrators can reject teams.'))
         for team in self:
             if not (team.rejection_reason or '').strip():
                 raise ValidationError(
@@ -107,6 +115,43 @@ class PlazyTeam(models.Model):
             team.registration_status = 'rejected'
             team._send_template('plazy.mail_template_team_rejected')
         return True
+
+    def _lock_roster(self):
+        self.ensure_one()
+        self.env.cr.execute('SELECT pg_advisory_xact_lock(72419022)')
+        self.invalidate_recordset()
+
+    @api.constrains('player_ids', 'team_type')
+    def _check_membership(self):
+        for team in self:
+            team.player_ids._check_single_team()
+            if len(team.player_ids) > team.maximum_player_count:
+                raise ValidationError(_('This roster exceeds the team size limit.'))
+            if any(p.company_id != team.company_id for p in team.player_ids):
+                raise ValidationError(_('Team and players must belong to the same company.'))
+
+    def _check_roster_space(self, invitation=False):
+        self._lock_roster()
+        if self.env['plazy.tournament.registration'].sudo().search_count([('team_id', '=', self.id), ('state', '=', 'approved'), ('tournament_id.state', 'not in', ['completed', 'cancelled'])]):
+            raise ValidationError(_('This team has a locked competition roster.'))
+        occupied = self.player_invitation_count
+        if invitation and invitation.status == 'sent' and invitation.expires_at > fields.Datetime.now():
+            occupied -= 1
+        if occupied >= self.maximum_player_count:
+            raise ValidationError(_('Your team has reached its player invitation limit.'))
+
+    def write(self, vals):
+        if {'registration_status', 'approved_at'}.intersection(vals) and not self.env.su and not (self.env.user.has_group('base.group_system') or self.env.user.has_group('plazy.competition_admin')):
+            raise AccessError(_('Team approval is managed by administrators.'))
+        if 'player_ids' in vals:
+            for team in self:
+                team._lock_roster()
+                if self.env['plazy.tournament.registration'].sudo().search_count([('team_id', '=', team.id), ('state', '=', 'approved'), ('tournament_id.state', 'not in', ['completed', 'cancelled'])]):
+                    raise ValidationError(_('The competition roster is locked. Contact the administrator.'))
+        result = super().write(vals)
+        if 'player_ids' in vals:
+            self.mapped('player_ids')._check_single_team()
+        return result
 
     @api.constrains('email', 'mobile', 'pincode')
     def _check_team_details(self):

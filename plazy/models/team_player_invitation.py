@@ -3,6 +3,7 @@ import secrets
 from datetime import timedelta
 
 from odoo import _, api, fields, models, tools
+from odoo.tools.sql import escape_like_value
 from odoo.exceptions import ValidationError
 
 
@@ -27,6 +28,7 @@ class PlazyTeamPlayerInvitation(models.Model):
         ('expired', 'Expired'),
         ('failed', 'Failed'),
         ('cancelled', 'Cancelled'),
+        ('rejected', 'Rejected'),
     ], required=True, default='sent', index=True, copy=False)
     token_hash = fields.Char(required=True, index=True, copy=False)
     email_token = fields.Char(copy=False, groups='base.group_system')
@@ -59,13 +61,20 @@ class PlazyTeamPlayerInvitation(models.Model):
         if not tools.single_email_re.match(email):
             result['message'] = _('Enter a valid email address.')
             return result
-        player = env['plazy.player'].sudo().search([('email', '=ilike', email)], limit=1)
-        user = env['res.users'].sudo().search([('login', '=ilike', email)], limit=1)
+        players = env['plazy.player'].sudo().search([('email_normalized', '=', email), ('company_id', '=', team.company_id.id)], limit=2)
+        if len(players) > 1:
+            result['message'] = _('This email needs an administrator review before another invitation can be sent.')
+            return result
+        player = players
+        user = env['res.users'].sudo().search([('login', '=ilike', escape_like_value(email))], limit=1)
         if player and team in player.team_ids:
             result['message'] = _('This player already belongs to your team.')
             return result
+        if player.team_ids:
+            result['message'] = _('This player is already registered with another team.')
+            return result
         invitation = env['plazy.team.player.invitation'].sudo().search([
-            ('team_id', '=', team.id), ('email', '=ilike', email), ('status', '=', 'sent'),
+            ('team_id', '=', team.id), ('email', '=ilike', escape_like_value(email)), ('status', '=', 'sent'),
         ], limit=1)
         if invitation:
             invitation._expire_if_needed()
@@ -79,16 +88,21 @@ class PlazyTeamPlayerInvitation(models.Model):
                 'Existing Plazy player found. They will be asked to log in and accept the invitation.'
             ) if (player or user) else _('Email is available for a new player invitation.'),
         })
+        if player.user_id:
+            result['player'] = {'name': player.full_name, 'position': player.position or '', 'email': email}
         return result
 
     @classmethod
     def create_and_send(cls, env, team, values):
+        team._check_roster_space()
         validation = cls.validate_email_for_team(env, team, values.get('email'))
         if not validation['valid']:
             raise ValidationError(validation['message'])
         email = validation['email']
-        player = env['plazy.player'].sudo().search([('email', '=ilike', email)], limit=1)
-        user = env['res.users'].sudo().search([('login', '=ilike', email)], limit=1)
+        player = env['plazy.player'].sudo().search([('email_normalized', '=', email), ('company_id', '=', team.company_id.id)], limit=1)
+        user = env['res.users'].sudo().search([('login', '=ilike', escape_like_value(email))], limit=1)
+        if player.user_id:
+            values = dict(values, player_name=player.full_name, mobile=player.mobile, position=player.position or '')
         if not player:
             # Keep the manager-entered details as a pending player profile. It is
             # deliberately not linked to the team until the invitation is accepted.
@@ -165,6 +179,9 @@ class PlazyTeamPlayerInvitation(models.Model):
 
     def resend(self):
         self.ensure_one()
+        self.team_id._check_roster_space(self)
+        if self.player_id.team_ids:
+            raise ValidationError(_('This player already belongs to a team.'))
         if self.status not in ('sent', 'expired', 'failed'):
             raise ValidationError(_('Only sent, expired, or failed invitations can be resent.'))
         token = secrets.token_urlsafe(32)
@@ -179,11 +196,15 @@ class PlazyTeamPlayerInvitation(models.Model):
 
     def accept(self, password=False):
         self.ensure_one()
+        self.team_id._check_roster_space(self)
+        self.invalidate_recordset()
+        if self.player_id.team_ids:
+            raise ValidationError(_('This player is already registered with another team.'))
         if not self.is_usable():
             raise ValidationError(_('This invitation is invalid, expired, cancelled, or has already been used.'))
         users = self.env['res.users'].sudo()
-        user = self.existing_user_id.exists() or users.search([('login', '=ilike', self.email)], limit=1)
-        player = self.player_id.exists() or self.env['plazy.player'].sudo().search([('email', '=ilike', self.email)], limit=1)
+        user = self.existing_user_id.exists() or users.search([('login', '=ilike', escape_like_value(self.email))], limit=1)
+        player = self.player_id.exists() or self.env['plazy.player'].sudo().search([('email', '=ilike', escape_like_value(self.email))], limit=1)
         if not user:
             if not password:
                 raise ValidationError(_('Choose a password to finish registration.'))
@@ -226,3 +247,7 @@ class PlazyTeamPlayerInvitation(models.Model):
                 invitation.status = 'joined'
                 invitation.team_id._refresh_registration_status()
         return True
+
+    @api.model
+    def _cron_expire(self):
+        self.search([('status', '=', 'sent'), ('expires_at', '<=', fields.Datetime.now())]).write({'status': 'expired'})

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="admin_portal" name="Plazy Admin Portal">
+        <t t-call="plazy.portal_layout">
+            <section class="plazy-admin-portal-page" id="plazy-main">
+                <div id="plazy-admin-portal" t-att-data-csrf-token="csrf_token" t-att-data-admin-name="admin_name">
+                    <section class="plazy-admin-portal-loading" aria-live="polite">
+                        <i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"/>
+                        Loading the Plazy command centre…
+                    </section>
+                </div>
+            </section>
+        </t>
+    </template>
+</odoo>

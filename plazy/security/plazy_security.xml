@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="privilege_competition" model="res.groups.privilege">
+        <field name="name">PLAZY Competition Management</field>
+    </record>
+    <record id="competition_admin" model="res.groups">
+        <field name="name">Competition Administrator</field>
+        <field name="privilege_id" ref="plazy.privilege_competition"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
     <record id="module_category_plazy" model="ir.module.category">
         <field name="name">Plazy</field>
         <field name="sequence">25</field>

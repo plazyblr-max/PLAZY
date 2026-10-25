@@ -1,3 +1,4 @@
+import json
 from unittest.mock import patch
 from urllib.parse import urlencode
 
@@ -96,6 +97,30 @@ class TestOnboarding(HttpCase):
         self.assertEqual(player.name, 'Full Name Player')
         self.assertEqual(player.position, 'Winger')
         self.assertTrue(player.user_id.has_group('plazy.player'))
+
+    def test_player_discovery_consent_and_privacy(self):
+        player, dashboard = self.register('player')
+        self.assertFalse(player.discoverable)
+        self.post_form('/plazy/player/discovery', {'discoverable': 'yes'}, dashboard)
+        player.invalidate_recordset()
+        self.assertTrue(player.discoverable)
+        self.authenticate(None, None)
+        team, _dashboard = self.register('team')
+
+        def search(prefix):
+            response = self.url_open('/plazy/team/players/search', data=json.dumps({
+                'jsonrpc': '2.0', 'id': 1, 'method': 'call', 'params': {'email': prefix},
+            }), headers={'Content-Type': 'application/json'})
+            return response.json()['result']['players']
+
+        matches = search('player-on')
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(set(matches[0]), {'name', 'email', 'position'})
+        self.assertFalse(search('pla%'))
+        player.discoverable = False
+        self.assertFalse(search('player-on'))
+        player.write({'discoverable': True, 'team_ids': [(4, team.id)]})
+        self.assertFalse(search('player-on'))
 
     def test_password_error_and_resend(self):
         page = self.post_form('/plazy/player/join', {
